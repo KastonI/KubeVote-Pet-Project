@@ -30,3 +30,4 @@ terraform.rc
 *.crt
 *.key
 *.pem
+kubeconfig
