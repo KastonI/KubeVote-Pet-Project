@@ -31,3 +31,5 @@ terraform.rc
 *.key
 *.pem
 kubeconfig
+
+.stfolder/*
