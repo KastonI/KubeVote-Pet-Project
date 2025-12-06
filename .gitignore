@@ -4,6 +4,7 @@ bin/
 obj/
 .vs/
 node_modules/
+.DS_store
 
 **/.terraform/*
 *.tfstate
