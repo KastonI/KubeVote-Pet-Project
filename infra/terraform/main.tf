@@ -14,7 +14,7 @@ locals {
   azs      = slice(data.aws_availability_zones.available.names, 0, 2)
 
   tags = {
-    Project      = local.name
+    Project   = local.name
     DevOps    = "KastonL"
     ManagedBy = "Terraform"
     GithubOrg = "terraform-aws-modules"

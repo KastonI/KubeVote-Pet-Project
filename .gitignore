@@ -6,7 +6,7 @@ obj/
 node_modules/
 .DS_store
 
-**/.terraform/*
+**/.terraform/
 *.tfstate
 *.tfstate.*
 
@@ -21,11 +21,11 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
+.terraform.lock.hcl
 .terraform.tfstate*
 
 .terraformrc
 terraform.rc
-.lock.hcl
 *.env
 *_key
 *.crt
@@ -33,4 +33,5 @@ terraform.rc
 *.pem
 kubeconfig
 
+**/.ansible
 .stfolder/*
