@@ -87,7 +87,7 @@ module "eks" {
   eks_managed_node_groups = {
     karpenter = {
       ami_type       = "BOTTLEROCKET_x86_64"
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 1
@@ -144,6 +144,8 @@ resource "helm_release" "argocd" {
   cleanup_on_fail = true
   wait            = false
 
+  depends_on = [ module.eks ]
+
   values = [<<-YAML
     global:
       nodeSelector:
@@ -179,31 +181,69 @@ resource "helm_release" "argocd" {
 
 }
 
-resource "helm_release" "karpenter" {
-  namespace           = "kube-system"
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
-  repository_password = data.aws_ecrpublic_authorization_token.token.password
-  chart               = "karpenter"
-  version             = "1.8.2"
-  wait                = false
+resource "kubernetes_manifest" "argocd_root_app" {
+  manifest = {
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "Application"
+    metadata = {
+      name      = "root"
+      namespace = "argocd"
+    }
+    spec = {
+      project = "default"
 
-  values = [
-    <<-EOT
-    nodeSelector:
-      karpenter.sh/controller: 'true'
-    dnsPolicy: Default
-    settings:
-      clusterName: ${module.eks.cluster_name}
-      clusterEndpoint: ${module.eks.cluster_endpoint}
-      interruptionQueue: ${module.karpenter.queue_name}
-    webhook:
-      enabled: false
-    EOT
-  ]
+      destination = {
+        server    = "https://kubernetes.default.svc"
+        namespace = "argocd"
+      }
+
+      source = {
+        repoURL        = "https://github.com/KastonI/KubeVote-Pet-Project.git"
+        targetRevision = "master"
+        path           = "infra/argocd"
+      }
+
+      syncPolicy = {
+        automated = {
+          prune    = true
+          selfHeal = true
+        }
+        syncOptions = [
+          "CreateNamespace=true"
+        ]
+      }
+    }
+  }
+  depends_on = [helm_release.argocd]
 }
 
 
+
+# resource "helm_release" "karpenter" {
+#   namespace           = "kube-system"
+#   name                = "karpenter"
+#   repository          = "oci://public.ecr.aws/karpenter"
+#   repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+#   repository_password = data.aws_ecrpublic_authorization_token.token.password
+#   chart               = "karpenter"
+#   version             = "1.8.2"
+#   wait                = false
+
+#   depends_on = [ module.eks ]
+
+#   values = [
+#     <<-EOT
+#     nodeSelector:
+#       karpenter.sh/controller: 'true'
+#     dnsPolicy: Default
+#     settings:
+#       clusterName: ${module.eks.cluster_name}
+#       clusterEndpoint: ${module.eks.cluster_endpoint}
+#       interruptionQueue: ${module.karpenter.queue_name}
+#     webhook:
+#       enabled: false
+#     EOT
+#   ]
+# }
+
 # EC2NodeClass and NodePool
-# ArgoCD via Helm
