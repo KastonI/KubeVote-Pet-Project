@@ -10,7 +10,7 @@ resource "helm_release" "argocd" {
   cleanup_on_fail = true
   wait            = true
 
-#  depends_on = [ module.eks ]
+  #  depends_on = [ module.eks ]
 
   values = [<<-YAML
 #    global:
@@ -47,13 +47,11 @@ resource "kubernetes_manifest" "argocd_root_app" {
         server    = "https://kubernetes.default.svc"
         namespace = "argocd"
       }
-
       source = {
         repoURL        = "https://github.com/KastonI/KubeVote-Pet-Project.git"
         targetRevision = "master"
         path           = "apps"
       }
-
       syncPolicy = {
         automated = {
           prune    = true

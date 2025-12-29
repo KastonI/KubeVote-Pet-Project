@@ -1,0 +1,28 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: vote-deployment
+#   labels:
+#     app: vote
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: vote
+#   template:
+#     metadata:
+#       labels:
+#         app: vote
+#     spec:
+#       containers:
+#       - name: vote
+#         image: ghcr.io/dockersamples/example-voting-app-vote:after
+#         ports:
+#         - containerPort: 80
+#         resources:
+#           limits:
+#             memory: "256Mi"
+#             cpu: "200m"
+#           requests:
+#             memory: "128Mi"
+#             cpu: "100m"
