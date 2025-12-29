@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: vote
-        image: ghcr.io/kastoni/vote:latest
+        image: ghcr.io/dockersamples/example-voting-app-vote:after
         ports:
         - containerPort: 80
         resources:

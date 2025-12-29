@@ -200,7 +200,7 @@ resource "kubernetes_manifest" "argocd_root_app" {
       source = {
         repoURL        = "https://github.com/KastonI/KubeVote-Pet-Project.git"
         targetRevision = "master"
-        path           = "infra/argocd"
+        path           = "k8s"
       }
 
       syncPolicy = {
