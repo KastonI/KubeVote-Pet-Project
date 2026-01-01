@@ -45,11 +45,11 @@ resource "kubernetes_manifest" "argocd_root_app" {
 
       destination = {
         server    = "https://kubernetes.default.svc"
-        namespace = "argocd"
+        namespace = "local"
       }
       source = {
         repoURL        = "https://github.com/KastonI/KubeVote-Pet-Project.git"
-        targetRevision = "master"
+        targetRevision = "Test"
         path           = "apps"
       }
       syncPolicy = {
