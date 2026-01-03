@@ -4,12 +4,17 @@ metadata:
   labels:
     app: redis
   name: redis
+  namespace: default
 spec:
-  type: ClusterIP
-  ports:
-  - name: "redis-service"
-    port: 6379
-    targetPort: 6379
   selector:
     app: redis
-  
+  type: ClusterIP
+  # sessionAffinity: None
+  # sessionAffinityConfig:
+  #   clientIP:
+  #     timeoutSeconds: 10800
+  ports:
+  - name: redis
+    protocol: TCP
+    port: 6379
+    targetPort: 6379

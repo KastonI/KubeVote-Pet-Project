@@ -1,52 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: vote
   namespace: default
   labels:
-    app: redis
+    app: vote
 spec:
   selector:
     matchLabels:
-      app: redis
-  replicas: 1
+      app: vote
+  replicas: 3
+  # strategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+  #   type: RollingUpdate
   template:
     metadata:
       labels:
-        app: redis
+        app: vote
     spec:
       containers:
-      - name: redis
-        image:  redis:alpine
+      - name: vote
+        image: dockersamples/examplevotingapp_vote
         resources:
           requests:
             cpu: 100m
-            memory: 256Mi
+            memory: 100Mi
           limits:
             cpu: 100m
-            memory: 256Mi
+            memory: 100Mi
         livenessProbe:
           tcpSocket:
-            port: 6379
+            port: 80
           initialDelaySeconds: 3
-          timeoutSeconds: 5
+          timeoutSeconds: 3
           successThreshold: 1
           failureThreshold: 3
           periodSeconds: 10
         readinessProbe:
-          tcpSocket:
-            port: 6379
-          initialDelaySeconds: 5
+          httpGet:
+            port: 80
+          initialDelaySeconds: 3
           timeoutSeconds: 2
           successThreshold: 1
           failureThreshold: 3
           periodSeconds: 10
         ports:
-        - containerPort: 6379
-          name: redis
-        volumeMounts:
-        - name: redis-data
-          mountPath: /data
-      volumes:
-      - name: redis-data
-        emptyDir: {}
+        - containerPort: 80
+          name: vote
+      restartPolicy: Always

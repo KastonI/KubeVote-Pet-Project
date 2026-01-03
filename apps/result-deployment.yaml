@@ -1,22 +1,51 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: result
+  namespace: default
   labels:
     app: result
-  name: result
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: result
+  replicas: 1
+  # strategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+  #   type: RollingUpdate
   template:
     metadata:
       labels:
         app: result
     spec:
       containers:
-      - image: dockersamples/examplevotingapp_result
-        name: result
+      - name: result
+        image: dockersamples/examplevotingapp_result
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
         ports:
         - containerPort: 80
           name: result

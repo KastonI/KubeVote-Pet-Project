@@ -7,7 +7,7 @@ spec:
   selector:
     app: result
   type: NodePort
-ports:
+  ports:
   - name: result
     protocol: TCP
     port: 80
