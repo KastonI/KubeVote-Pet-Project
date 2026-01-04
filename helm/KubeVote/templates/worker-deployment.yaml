@@ -20,6 +20,8 @@ spec:
         - name: "{{ .Values.worker.name | default "worker" }}"
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
           # {{- with .Values.probes.liveness }}
           # livenessProbe:
           #   {{- toYaml . | nindent 12 }}
@@ -28,7 +30,3 @@ spec:
           # readinessProbe:
           #   {{- toYaml . | nindent 12 }}
           # {{- end }}
-          {{- with .Values.worker.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
