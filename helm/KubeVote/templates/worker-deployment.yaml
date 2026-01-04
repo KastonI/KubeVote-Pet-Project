@@ -21,13 +21,13 @@ spec:
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           {{- with .Values.probes.liveness }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.probes.readiness }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+          # livenessProbe:
+          #   {{- toYaml . | nindent 12 }}
+          # {{- end }}
+          # {{- with .Values.probes.readiness }}
+          # readinessProbe:
+          #   {{- toYaml . | nindent 12 }}
+          # {{- end }}
           {{- with .Values.worker.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
