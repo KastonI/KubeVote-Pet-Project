@@ -129,7 +129,7 @@ postgresql:
   auth:
     username: postgres
     password: postgres
-    database: kubevote
+    database: postgres
 
   primary:
     persistence:
