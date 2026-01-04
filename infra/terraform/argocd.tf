@@ -54,12 +54,12 @@ spec:
   project: default
   destination:
     server: https://kubernetes.default.svc
-    namespace: local
+    namespace: default
 
   source:
     repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
     targetRevision: Test
-    path: apps
+    path: helm/KubeVote
 
   syncPolicy:
     automated:
