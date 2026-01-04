@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-%s" (include "KubeVote.fullname" .) "vote" | trunc 63 | trimSuffix "-" }}
+  name: {{ printf "%s-%s" (include "KubeVote.fullname" .) .Values.vote.name | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "KubeVote.labels" . | nindent 4 }}
 spec:
   selector:
-    {{- include "KubeVote.selectorLabels" (dict "component" "vote" "Release" .Release "Chart" .Chart "Values" .Values) | nindent 4 }}
+    {{- include "KubeVote.selectorLabels" (dict "component" .Values.vote.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 4 }}
 
-  type: NodePort
+  type: {{ .Values.vote.service.type }}
   ports:
-  - name: vote
+  - name: {{ .Values.vote.name }}
     protocol: TCP
-    port: 8080
-    targetPort: 80
-    nodePort: 30080
+    port: {{ .Values.vote.service.port }}
+    targetPort: {{ .Values.vote.service.targetPort }}
+    nodePort: {{ .Values.vote.service.nodePort }}
