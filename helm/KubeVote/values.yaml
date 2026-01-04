@@ -5,7 +5,6 @@ global:
   imageTag: ""
   imagePullPolicy: IfNotPresent
 
-
 probes:
   liveness:
     httpGet:
@@ -99,13 +98,55 @@ result:
   tolerations: []
   affinity: {}
 
+#--------------------------------------------------------------------
+worker:
+  name: worker
+  replicaCount: 1
+  image:
+    repository: dockersamples/examplevotingapp_worker
+    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
 
+  podAnnotations: {}
 
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 100Mi
 
+  # Дополнительно (best practice hooks)
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
+#--------------------------------------------------------------------
+postgresql:
+  enabled: true
+  fullnameOverride: db
 
+  auth:
+    username: postgres
+    password: postgres
+    database: kubevote
 
+  primary:
+    persistence:
+      enabled: true
+      size: 4Gi
+      storageClass: local-storage
 
+redis:
+  enabled: true
+  architecture: standalone
+
+  auth:
+    enabled: false
+
+  master:
+    persistence:
+      enabled: false
 
 
 
