@@ -8,10 +8,6 @@ Expand the name of the chart.
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "KubeVote.name" -}}
-{{- default .Chart.Name .Values.nameOverride | lower | trunc 63 | trimSuffix "-" -}}
-{{- end }}
-
 {{- define "KubeVote.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | lower | trunc 63 | trimSuffix "-" -}}
