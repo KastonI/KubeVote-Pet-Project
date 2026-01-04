@@ -8,15 +8,19 @@ Expand the name of the chart.
 {{/*
 Create a default fully qualified app name.
 */}}
+{{- define "KubeVote.name" -}}
+{{- default .Chart.Name .Values.nameOverride | lower | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
 {{- define "KubeVote.fullname" -}}
 {{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- .Values.fullnameOverride | lower | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- $name := default .Chart.Name .Values.nameOverride | lower -}}
+{{- if contains $name (.Release.Name | lower) -}}
+{{- .Release.Name | lower | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (.Release.Name | lower) $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 {{- end }}

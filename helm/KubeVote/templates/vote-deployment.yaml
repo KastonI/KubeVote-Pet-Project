@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "KubeVote.fullname" . }}-vote
+  name: {{ printf "%s-%s" (include "KubeVote.fullname" .) "vote" | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "KubeVote.labels" . | nindent 4 }}
 spec:
