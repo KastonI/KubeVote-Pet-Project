@@ -138,6 +138,8 @@ postgresql:
       storageClass: local-storage
 
 redis:
+  fullnameOverride: redis
+
   enabled: true
   architecture: standalone
 
