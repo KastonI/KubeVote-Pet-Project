@@ -42,7 +42,7 @@ vote:
   replicaCount: 3
   image:
     repository: dockersamples/examplevotingapp_vote
-    tag: ""               # если пусто — будет использоваться .Chart.AppVersion
+    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
 
   podAnnotations: {}
 
