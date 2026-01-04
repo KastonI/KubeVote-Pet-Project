@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "KubeVote.fullname" . }}-vote
+  labels:
+    {{- include "KubeVote.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "KubeVote.selectorLabels" (dict "component" "vote" "Release" .Release "Chart" .Chart "Values" .Values) | nindent 4 }}
+
+  type: NodePort
+  ports:
+  - name: vote
+    protocol: TCP
+    port: 8080
+    targetPort: 80
+    nodePort: 30080

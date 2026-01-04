@@ -3,3 +3,8 @@ variable "env" {
   type        = string
   default     = "dev"
 }
+
+variable "argocd_admin_password_bcrypt" {
+  description = "Password to ArgoCd"
+  type = string
+}
