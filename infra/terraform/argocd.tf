@@ -59,7 +59,7 @@ spec:
   source:
     repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
     targetRevision: Test
-    path: helm/KubeVote
+    path: helm/
 
   syncPolicy:
     automated:
