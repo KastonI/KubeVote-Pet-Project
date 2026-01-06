@@ -15,21 +15,18 @@ spec:
     spec:
       securityContext:
         sysctls:
-        # Allows ICMP traffic (ping, traceroute) to resources behind cloudflared.
           - name: net.ipv4.ping_group_range
             value: "65532 65532"
       containers:
         - image: cloudflare/cloudflared:latest
           name: cloudflared
           env:
-            # Defines an environment variable for the tunnel token.
             - name: TUNNEL_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: tunnel-token
                   key: token
           command:
-            # Configures tunnel run parameters
             - cloudflared
             - tunnel
             - --no-autoupdate
