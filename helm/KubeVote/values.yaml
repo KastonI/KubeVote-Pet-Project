@@ -35,7 +35,7 @@ vote:
   image:
     repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:2d998b2629d936a63ef254ebec1ec34d06b791c5603df1d2b831e823386408d4"
+    digest: "sha256:5cb9ac5605a1aa3b8e0ae3457b97966902fb0d133ec8c75859f7eecd73b591f6"
   podAnnotations: {}
   service:
     type: NodePort
@@ -141,14 +141,12 @@ redis:
 #   # The name of the service account to use.
 #   # If not set and create is true, a name is generated using the fullname template.
 #   name: ""
-
 # # This is for setting Kubernetes Annotations to a Pod.
 # # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 # podAnnotations: {}
 # # This is for setting Kubernetes Labels to a Pod.
 # # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 # podLabels: {}
-
 # podSecurityContext: {}
 #   # fsGroup: 2000
 
