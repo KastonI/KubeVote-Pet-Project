@@ -12,8 +12,8 @@ RUN npm ci && npm cache clean --force && mv /usr/local/app/node_modules /node_mo
 
 COPY . .
 
-ENV PORT=80
-EXPOSE 80
+ENV PORT=8080
+EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]
