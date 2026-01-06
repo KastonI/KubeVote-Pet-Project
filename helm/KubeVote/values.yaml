@@ -58,8 +58,9 @@ result:
   name: result
   replicaCount: 1
   image:
-    repository: dockersamples/examplevotingapp_result
+    repository: ghcr.io/kastoni/kubevote-result
     tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+    digest: sha256:8ae18d5fd552f991b4a405ce870f01d082338ca3e0336fea28ef7d2f74ccf3eb
   podAnnotations: {}
   service:
     type: NodePort
