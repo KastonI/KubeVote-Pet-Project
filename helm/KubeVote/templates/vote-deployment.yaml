@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: "{{ .Values.vote.name | default "vote" }}"
-          image: "{{ .Values.vote.image.repository }}:{{ .Values.vote.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.vote.image.repository }}@{{ .Values.vote.image.digest }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
             - name: http

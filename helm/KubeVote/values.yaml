@@ -40,9 +40,9 @@ vote:
   name: vote
   replicaCount: 3
   image:
-    repository: dockersamples/examplevotingapp_vote
-    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-
+    repository: ghcr.io/kastoni/kubevote-vote
+#    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
+    digest: ""              
   podAnnotations: {}
 
   service:
