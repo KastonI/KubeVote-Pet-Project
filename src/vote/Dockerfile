@@ -17,8 +17,8 @@ COPY --chown=appuser:appuser . .
 
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 80
+EXPOSE 8080
 
 USER appuser
 
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4"]
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:8080", "--log-file", "-", "--access-logfile", "-", "--workers", "4"]

@@ -9,7 +9,7 @@ probes:
   liveness:
     httpGet:
       path: "/"
-      port: 80
+      port: 8080
     initialDelaySeconds: 10
     periodSeconds: 10
     timeoutSeconds: 2
@@ -18,7 +18,7 @@ probes:
   readiness:
     httpGet:
       path: "/"
-      port: 80
+      port: 8080
     initialDelaySeconds: 5
     periodSeconds: 5
     timeoutSeconds: 2
@@ -48,7 +48,7 @@ vote:
   service:
     type: NodePort
     port: 80
-    targetPort: 80
+    targetPort: 8080
     nodePort: 30080
 
   resources:
