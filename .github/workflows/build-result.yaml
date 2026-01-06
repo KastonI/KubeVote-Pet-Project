@@ -1,17 +1,17 @@
-name: vote image -> GHCR -> update Helm values
+name: result image -> GHCR -> update Helm values
 
 on:
   push:
     branches: ["master"]
     paths:
-      - "src/vote/**"
-      - ".github/workflows/build.yaml"
+      - "src/result/**"
+      - ".github/workflows/build-result.yaml"
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  SERVICE: vote
-  IMAGE: ghcr.io/kastoni/kubevote-vote              #ghcr.io/${{ github.repository_owner | toLower }}/KubeVote-vote
+  SERVICE: result
+  IMAGE: ghcr.io/kastoni/kubevote-result              #ghcr.io/${{ github.repository_owner | toLower }}/KubeVote-result
   PATH_TO_HELM: ./helm/KubeVote
 
 jobs:
@@ -73,14 +73,14 @@ jobs:
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
           cd ${{ env.PATH_TO_HELM}}
-          # vote.image.repository: ghcr.io/...-vote
-          # vote.image.digest: sha256:...
-          yq -i '.vote.image.repository = strenv(IMAGE)' ./values.yaml
-          yq -i '.vote.image.digest = strenv(DIGEST)' ./values.yaml
-
+          # result.image.repository: ghcr.io/...-result
+          # result.image.digest: sha256:...
+          yq -i '.result.image.repository = strenv(IMAGE)' ./values.yaml
+          yq -i '.result.image.digest = strenv(DIGEST)' ./values.yaml
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ./values.yaml
-          git commit -m "chore(vote): bump image to ${IMAGE}@${DIGEST}" || exit 0
+          git commit -m "chore(result): bump image to ${IMAGE}@${DIGEST}" || exit 0
           git pull --rebase
           git push
