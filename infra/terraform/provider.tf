@@ -38,6 +38,10 @@ provider "kubernetes" {
   config_context = "kubernetes-admin@kubernetes"
 }
 
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
+}
+
 terraform {
   required_version = ">= 1.10.0"
 
@@ -50,9 +54,13 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 3.0"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.27"
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5"
     }
   }
 }

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "KubeVote.fullname" .) .Values.result.name | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "KubeVote.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.result.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "KubeVote.selectorLabels" (dict "component" .Values.result.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "KubeVote.podLabels" (dict "component" .Values.result.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 8 }}
+    spec:
+      containers:
+        - name: "{{ .Values.result.name | default "result" }}"
+          image: "{{ .Values.result.image.repository }}:{{ .Values.result.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.result.service.targetPort }}
+              protocol: TCP
+          {{- with .Values.probes.liveness }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.probes.readiness }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.result.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

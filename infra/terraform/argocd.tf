@@ -9,8 +9,18 @@ resource "helm_release" "argocd" {
   atomic          = true
   cleanup_on_fail = true
   wait            = true
+  timeout = 600
+  #  depends_on = [ module.eks ]
 
-#  depends_on = [ module.eks ]
+  set_sensitive = [ {
+    name  = "configs.secret.argocdServerAdminPassword"
+    value = var.argocd_admin_password_bcrypt
+  } ]
+
+  set = [ {
+    name  = "configs.secret.argocdServerAdminPasswordMtime"
+    value = "2026-01-04T00:00:00Z"
+  } ]
 
   values = [<<-YAML
 #    global:
@@ -32,38 +42,30 @@ resource "helm_release" "argocd" {
   ]
 }
 
-resource "kubernetes_manifest" "argocd_root_app" {
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
-    metadata = {
-      name      = "root"
-      namespace = "argocd"
-    }
-    spec = {
-      project = "default"
-
-      destination = {
-        server    = "https://kubernetes.default.svc"
-        namespace = "argocd"
-      }
-
-      source = {
-        repoURL        = "https://github.com/KastonI/KubeVote-Pet-Project.git"
-        targetRevision = "master"
-        path           = "apps"
-      }
-
-      syncPolicy = {
-        automated = {
-          prune    = true
-          selfHeal = true
-        }
-        syncOptions = [
-          "CreateNamespace=true"
-        ]
-      }
-    }
-  }
+resource "kubectl_manifest" "argocd_root_app" {
   depends_on = [helm_release.argocd]
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  source:
+    repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
+    targetRevision: Test
+    path: apps
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
 }
