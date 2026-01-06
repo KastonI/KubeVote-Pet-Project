@@ -2,7 +2,7 @@ name: vote image -> GHCR -> update Helm values
 
 on:
   push:
-    branches: ["test"]
+    branches: ["master"]
     paths:
       - "src/vote/**"
       - ".github/workflows/vote.yml"
@@ -18,7 +18,7 @@ jobs:
   build_push_update:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
       id-token: write
 
