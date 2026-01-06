@@ -47,7 +47,7 @@ vote:
 
   service:
     type: NodePort
-    port: 8080
+    port: 80
     targetPort: 80
     nodePort: 30080
 
