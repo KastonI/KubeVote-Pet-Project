@@ -33,9 +33,9 @@ vote:
   name: vote
   replicaCount: 3
   image:
-    repository: ghcr.io/KastonI/KubeVote-vote
+    repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:f1fa2e578b459b04f31b8b3f58c3a05211bcd527e45900bc12f3e1643d709aaf"
+    digest: "sha256:2d998b2629d936a63ef254ebec1ec34d06b791c5603df1d2b831e823386408d4"
   podAnnotations: {}
   service:
     type: NodePort
@@ -127,13 +127,11 @@ redis:
 #   pullPolicy: IfNotPresent
 #   # Overrides the image tag whose default is the chart appVersion.
 #   tag: ""
-
 # # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 # imagePullSecrets: []
 # # This is to override the chart name.
 # nameOverride: ""
 # fullnameOverride: ""
-
 # # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 # serviceAccount:
 #   # Specifies whether a service account should be created.
