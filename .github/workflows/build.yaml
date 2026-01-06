@@ -11,7 +11,7 @@ on:
 env:
   REGISTRY: ghcr.io
   SERVICE: vote
-  IMAGE: ghcr.io/${{ github.repository_owner | toLower }}/KubeVote-vote
+  IMAGE: ghcr.io/kastoni/kubevote-vote              #ghcr.io/${{ github.repository_owner | toLower }}/KubeVote-vote
   PATH_TO_HELM: ./helm/KubeVote
 
 jobs:
