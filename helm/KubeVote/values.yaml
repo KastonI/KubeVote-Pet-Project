@@ -60,7 +60,7 @@ result:
   image:
     repository: ghcr.io/kastoni/kubevote-result
     tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
-    digest: sha256:8ae18d5fd552f991b4a405ce870f01d082338ca3e0336fea28ef7d2f74ccf3eb
+    digest: sha256:99a02f22574a8935aebd0ce112e8cb004181a31dae1a9bc71ea60e283955370d
   podAnnotations: {}
   service:
     type: NodePort
@@ -150,7 +150,6 @@ redis:
 # podLabels: {}
 # podSecurityContext: {}
 #   # fsGroup: 2000
-
 # securityContext: {}
 #   # capabilities:
 #   #   drop:
@@ -158,7 +157,6 @@ redis:
 #   # readOnlyRootFilesystem: true
 #   # runAsNonRoot: true
 #   # runAsUser: 1000
-
 # # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 # service:
 #   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
