@@ -1,17 +1,18 @@
-name: result image -> GHCR -> update Helm values
+name: worker image -> GHCR -> update Helm values
 
 on:
   push:
     branches: ["master"]
+    tags: ["v*"]
     paths:
-      - "src/result/**"
-      - ".github/workflows/build-result.yaml"
+      - "src/worker/**"
+      - ".github/workflows/build-worker.yaml"
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  SERVICE: result
-  IMAGE: ghcr.io/kastoni/kubevote-result              #ghcr.io/${{ github.repository_owner | toLower }}/KubeVote-result
+  SERVICE: worker
+  IMAGE: ghcr.io/kastoni/kubevote-vote              #ghcr.io/${{ github.repository_owner | toLower }}/KubeVote-vote
   PATH_TO_HELM: ./helm/KubeVote
 
 jobs:
@@ -53,19 +54,18 @@ jobs:
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.created=${{ steps.meta.outputs.created }}
 
-
       - name: Build & Push
         id: build
         uses: docker/build-push-action@v6.18.0
         with:
-          context: ./src/result
-          file: ./src/result/Dockerfile
+          context: ./src/${{ env.SERVICE }}
+          file: ./src/${{ env.SERVICE }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=result
-          cache-to: type=gha,mode=max,scope=result
+          cache-from: type=gha,scope=${{ env.SERVICE }}
+          cache-to: type=gha,mode=max,scope=${{ env.SERVICE }}
           sbom: true
           provenance: mode=max
 
@@ -83,14 +83,14 @@ jobs:
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
           cd ${{ env.PATH_TO_HELM}}
-          # result.image.repository: ghcr.io/...-result
-          # result.image.digest: sha256:...
-          yq -i '.result.image.repository = strenv(IMAGE)' ./values.yaml
-          yq -i '.result.image.digest = strenv(DIGEST)' ./values.yaml
-          
+          # worker.image.repository: ghcr.io/...
+          # worker.image.digest: sha256:...
+          yq -i '.${{ env.SERVICE }}.image.repository = strenv(IMAGE)' ./values.yaml
+          yq -i '.${{ env.SERVICE }}.image.digest = strenv(DIGEST)' ./values.yaml
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ./values.yaml
-          git commit -m "chore(result): bump image to ${IMAGE}@${DIGEST}" || exit 0
+          git commit -m "chore(${{ env.SERVICE }}): bump image to ${IMAGE}@${DIGEST}" || exit 0
           git pull --rebase
           git push

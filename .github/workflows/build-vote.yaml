@@ -3,6 +3,7 @@ name: vote image -> GHCR -> update Helm values
 on:
   push:
     branches: ["master"]
+    tags: ["v*"]
     paths:
       - "src/vote/**"
       - ".github/workflows/build-vote.yaml"
@@ -41,8 +42,17 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=sha,format=long
             type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,format=short
+            type=semver,pattern={{major}},prefix=v,enable={{is_tag}}
+            type=semver,pattern={{major}}.{{minor}},prefix=v,enable={{is_tag}}
+            type=semver,pattern={{version}},prefix=v,enable={{is_tag}}
+            type=sha,format=long
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
 
       - name: Build & Push
         id: build

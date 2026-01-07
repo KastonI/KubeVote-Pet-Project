@@ -49,7 +49,7 @@ vote:
     limits:
       cpu: 150m
       memory: 500Mi
-  # Дополнительно (best practice hooks)
+  redis_host: redis-master
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -110,6 +110,8 @@ postgresql:
       enabled: true
       size: 4Gi
       storageClass: local-storage
+
+
 redis:
   fullnameOverride: redis
   enabled: true
@@ -119,6 +121,9 @@ redis:
   master:
     persistence:
       enabled: false
+
+
+#--------------------------------------------------------------------
 # replicaCount: 1
 # image:
 #   repository: nginx

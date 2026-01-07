@@ -33,7 +33,9 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-  
+          env:
+            - name: REDIS_HOST
+              value: "{{ .Values.vote.redis_host }}"
           {{- with .Values.vote.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
