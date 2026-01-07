@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: "{{ .Values.result.name | default "result" }}"
-          image: "{{ .Values.result.image.repository }}:{{ .Values.result.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.result.image.repository }}@{{ .Values.result.image.digest }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
             - name: http
