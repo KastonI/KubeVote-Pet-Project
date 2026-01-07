@@ -35,7 +35,7 @@ vote:
   image:
     repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:5cb9ac5605a1aa3b8e0ae3457b97966902fb0d133ec8c75859f7eecd73b591f6"
+    digest: "sha256:d4fc900f6c5e25a02484338336bd79ced6caab2baa3cfd62cdf95a28c1642d2b"
   podAnnotations: {}
   service:
     type: NodePort
@@ -110,8 +110,6 @@ postgresql:
       enabled: true
       size: 4Gi
       storageClass: local-storage
-
-
 redis:
   fullnameOverride: redis
   enabled: true
@@ -121,8 +119,6 @@ redis:
   master:
     persistence:
       enabled: false
-
-
 #--------------------------------------------------------------------
 # replicaCount: 1
 # image:
@@ -241,7 +237,6 @@ redis:
 #   httpGet:
 #     path: /
 #     port: http
-
 # # Additional volumes on the output Deployment definition.
 # volumes: []
 #   # - name: foo
