@@ -60,7 +60,7 @@ result:
   image:
     repository: ghcr.io/kastoni/kubevote-result
     tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
-    digest: sha256:99a02f22574a8935aebd0ce112e8cb004181a31dae1a9bc71ea60e283955370d
+    digest: sha256:0f3ea411752ee5fb85fecfc69643dc68bd9458d1b2d3b0d1a6bd81c7134c7c40
   podAnnotations: {}
   service:
     type: NodePort
@@ -163,7 +163,6 @@ redis:
 #   type: ClusterIP
 #   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
 #   port: 80
-
 # # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 # ingress:
 #   enabled: false
@@ -180,7 +179,6 @@ redis:
 #     # - secretName: chart-example-tls
 #     #   hosts:
 #     #     - chart-example.local
-
 # # -- Expose the service via gateway-api HTTPRoute
 # # Requires Gateway API resources and suitable controller installed within the cluster
 # # (see: https://gateway-api.sigs.k8s.io/guides/)
