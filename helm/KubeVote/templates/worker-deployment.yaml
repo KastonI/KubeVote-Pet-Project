@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: "{{ .Values.worker.name | default "worker" }}"
-          image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.result.image.repository }}@{{ .Values.result.image.digest }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           {{- with .Values.worker.resources }}
           resources:
