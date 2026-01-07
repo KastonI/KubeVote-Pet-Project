@@ -84,7 +84,8 @@ worker:
   replicaCount: 1
   image:
     repository: dockersamples/examplevotingapp_worker
-    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+    digest: 
+    # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   resources:
     requests:
