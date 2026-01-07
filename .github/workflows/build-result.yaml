@@ -48,14 +48,14 @@ jobs:
         id: build
         uses: docker/build-push-action@v6.18.0
         with:
-          context: ./src/vote
-          file: ./src/vote/Dockerfile
+          context: ./src/result
+          file: ./src/result/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=vote
-          cache-to: type=gha,mode=max,scope=vote
+          cache-from: type=gha,scope=result
+          cache-to: type=gha,mode=max,scope=result
           sbom: true
           provenance: mode=max
 
