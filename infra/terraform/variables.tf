@@ -6,18 +6,18 @@ variable "env" {
 
 variable "argocd_admin_password_bcrypt" {
   description = "Password to ArgoCd"
-  type = string
+  type        = string
 }
 
-variable "cloudflare_api_token"  {
-  type = string
+variable "cloudflare_api_token" {
+  type      = string
   sensitive = true
 }
 
 variable "cloudflare_account_id" {
-  type = string
+  type      = string
   sensitive = true
-  default = "21d5f7467434911098b83ab93752b470"
+  default   = "21d5f7467434911098b83ab93752b470"
 }
 
 variable "domain" {
