@@ -35,7 +35,7 @@ vote:
   image:
     repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:5cb9ac5605a1aa3b8e0ae3457b97966902fb0d133ec8c75859f7eecd73b591f6"
+    digest: "sha256:d4fc900f6c5e25a02484338336bd79ced6caab2baa3cfd62cdf95a28c1642d2b"
   podAnnotations: {}
   service:
     type: NodePort
@@ -59,7 +59,7 @@ result:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-result
-    digest: sha256:12ae281d419c24bdb1f2a5081241095b4be73751ec4ed24306768a8bd31a9134
+    digest: sha256:b49bdc5a35d804da22f10051314b0f0fd39bd845429e1eb8470e77887cad4954
     # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   service:
@@ -83,9 +83,9 @@ worker:
   name: worker
   replicaCount: 1
   image:
-    repository: dockersamples/examplevotingapp_worker
-    digest: 
-    # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+    repository: ghcr.io/kastoni/kubevote-vote
+#    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+    digest:
   podAnnotations: {}
   resources:
     requests:
@@ -111,8 +111,6 @@ postgresql:
       enabled: true
       size: 4Gi
       storageClass: local-storage
-
-
 redis:
   fullnameOverride: redis
   enabled: true
@@ -122,8 +120,6 @@ redis:
   master:
     persistence:
       enabled: false
-
-
 #--------------------------------------------------------------------
 # replicaCount: 1
 # image:
@@ -242,7 +238,6 @@ redis:
 #   httpGet:
 #     path: /
 #     port: http
-
 # # Additional volumes on the output Deployment definition.
 # volumes: []
 #   # - name: foo
