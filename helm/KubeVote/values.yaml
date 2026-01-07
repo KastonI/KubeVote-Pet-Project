@@ -83,8 +83,9 @@ worker:
   name: worker
   replicaCount: 1
   image:
-    repository: dockersamples/examplevotingapp_worker
+    repository: ghcr.io/kastoni/kubevote-vote
     tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+    digest: sha256:b1870a2c5527d93018c9cd2b19b5fc80d2f5b6c2c67328d4840c6109be21336e
   podAnnotations: {}
   resources:
     requests:
