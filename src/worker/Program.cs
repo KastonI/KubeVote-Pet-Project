@@ -70,10 +70,6 @@ namespace Worker
                             UpdateVote(pgsql, vote.voter_id, vote.vote);
                         }
                     }
-                    else
-                    {
-                        keepAliveCommand.ExecuteNonQuery();
-                    }
                 }
             }
             catch (Exception ex)
