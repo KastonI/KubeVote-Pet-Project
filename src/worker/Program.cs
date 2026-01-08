@@ -115,22 +115,23 @@ namespace Worker
             return connection;
         }
 
-        private static ConnectionMultiplexer OpenRedisConnection(string hostname)
+private static ConnectionMultiplexer OpenRedisConnection(string endpoint)
+{
+    while (true)
+    {
+        try
         {
-            while (true)
-            {
-                try
-                {
-                    Console.Error.WriteLine("Connecting to redis");
-                    return ConnectionMultiplexer.Connect(ipAddress);
-                }
-                catch (RedisConnectionException)
-                {
-                    Console.Error.WriteLine("Waiting for redis");
-                    Thread.Sleep(1000);
-                }
-            }
+            Console.WriteLine($"Connecting to Redis at {endpoint}");
+            return ConnectionMultiplexer.Connect(endpoint);
         }
+        catch (RedisConnectionException)
+        {
+            Console.WriteLine("Waiting for Redis...");
+            Thread.Sleep(1000);
+        }
+    }
+}
+
 
         private static void UpdateVote(NpgsqlConnection connection, string voterId, string vote)
         {
