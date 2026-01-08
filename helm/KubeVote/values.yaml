@@ -94,6 +94,7 @@ worker:
     limits:
       cpu: 100m
       memory: 100Mi
+  redis_host: redis-master
   # Дополнительно (best practice hooks)
   nodeSelector: {}
   tolerations: []

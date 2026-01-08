@@ -12,20 +12,37 @@ namespace Worker
 {
     public class Program
     {
+        static string Env(string key, string def)
+            => Environment.GetEnvironmentVariable(key) ?? def;
+
         public static int Main(string[] args)
         {
             try
             {
-                var pgsql = OpenDbConnection("Server=db;Username=postgres;Password=postgres;");
-                var redisConn = OpenRedisConnection("redis");
+                // ===== ENV CONFIG =====
+                string redisHost = Env("REDIS_HOST", "redis");
+                string redisPort = Env("REDIS_PORT", "6379");
+
+                string pgHost = Env("POSTGRES_HOST", "db");
+                string pgUser = Env("POSTGRES_USER", "postgres");
+                string pgPassword = Env("POSTGRES_PASSWORD", "postgres");
+                string pgDb = Env("POSTGRES_DB", "postgres");
+
+                string redisEndpoint = $"{redisHost}:{redisPort}";
+                string pgConnString = $"Server={pgHost};Username={pgUser};Password={pgPassword};Database={pgDb};";
+
+                Console.WriteLine($"Redis: {redisEndpoint}");
+                Console.WriteLine($"Postgres: {pgHost}/{pgDb}");
+
+                // ===== CONNECTIONS =====
+                var pgsql = OpenDbConnection(pgConnString);
+                var redisConn = OpenRedisConnection(redisEndpoint);
                 var redis = redisConn.GetDatabase();
 
-                // Keep alive is not implemented in Npgsql yet. This workaround was recommended:
-                // https://github.com/npgsql/npgsql/issues/1214#issuecomment-235828359
-                var keepAliveCommand = pgsql.CreateCommand();
-                keepAliveCommand.CommandText = "SELECT 1";
-
                 var definition = new { vote = "", voter_id = "" };
+
+                Console.WriteLine("Worker started");
+
                 while (true)
                 {
                     // Slow down to prevent CPU spike, only query each 100ms
