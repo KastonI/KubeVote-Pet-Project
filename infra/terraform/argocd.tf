@@ -58,7 +58,7 @@ spec:
 
   source:
     repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
-    targetRevision: master
+    targetRevision: gitops
     path: apps
 
   syncPolicy:
