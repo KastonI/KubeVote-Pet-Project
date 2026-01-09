@@ -24,6 +24,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+          ref: master
 
       - uses: docker/setup-qemu-action@v3.7.0
       - uses: docker/setup-buildx-action@v3.12.0
@@ -82,6 +85,7 @@ jobs:
           IMAGE: ${{ env.IMAGE }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
+          git checkout gitops
           cd ${{ env.PATH_TO_HELM}}
           # result.image.repository: ghcr.io/...-result
           # result.image.digest: sha256:...
@@ -92,5 +96,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ./values.yaml
           git commit -m "chore(result): bump image to ${IMAGE}@${DIGEST}" || exit 0
-          git pull --rebase
-          git push
+          git push origin gitops
