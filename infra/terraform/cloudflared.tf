@@ -19,8 +19,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "config" {
       }, {
       hostname = "result.${var.domain}"
       service  = "http://kubevote-result:80"
-      },
-      {
+      }, {
+      hostname = "argocd.${var.domain}"
+      serive = "https://argocd-server.argocd.svc.cluster.local"
+      }, {
         service = "http_status:404"
       }
     ]
@@ -39,6 +41,15 @@ resource "cloudflare_dns_record" "result_dns_record" {
 resource "cloudflare_dns_record" "vote_dns_record" {
   zone_id = one(data.cloudflare_zones.my_zone.result).id
   name    = "voting.${var.domain}"
+  ttl     = 1
+  type    = "CNAME"
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.cloudflared_tunnel.id}.cfargotunnel.com"
+  proxied = true
+}
+
+resource "cloudflare_dns_record" "argocd_dns_record" {
+  zone_id = one(data.cloudflare_zones.my_zone.result).id
+  name    = "argocd.${var.domain}"
   ttl     = 1
   type    = "CNAME"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.cloudflared_tunnel.id}.cfargotunnel.com"
