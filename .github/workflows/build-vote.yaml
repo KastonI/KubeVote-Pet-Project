@@ -25,6 +25,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+          ref: master
 
       - uses: docker/setup-qemu-action@v3.7.0
       - uses: docker/setup-buildx-action@v3.12.0
@@ -69,12 +72,6 @@ jobs:
           sbom: true
           provenance: mode=max
 
-      - name: Checkout GitOps branch
-        uses: actions/checkout@v3
-        with:
-          ref: gitops
-          fetch-depth: 0
-
       - name: Install yq (pinned)
         run: |
           YQ_VERSION="v4.50.1"
@@ -88,6 +85,7 @@ jobs:
           IMAGE: ${{ env.IMAGE }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
+          git checkout gitops
           cd ${{ env.PATH_TO_HELM}}
           # vote.image.repository: ghcr.io/...-vote
           # vote.image.digest: sha256:...
