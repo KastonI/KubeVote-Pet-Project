@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl=7.88.1-10+deb12u7 tini=0.19.0-1 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl=7.88.1-10+deb12u14 tini=0.19.0-1+b3 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/app
 
