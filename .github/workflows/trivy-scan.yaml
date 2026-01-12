@@ -1,0 +1,156 @@
+name: Secrets and config security scan
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+env:
+  TRIVY_SEVERITY: "CRITICAL,HIGH"
+
+jobs:
+  security-scan:
+    name: Trivy security gate (repo + IaC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # -----------------------
+      # Secrets scan (SARIF)
+      # -----------------------
+      - name: Trivy secrets scan (SARIF)
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: secret
+          format: sarif
+          output: trivy-secrets.sarif
+          trivyignores: .trivyignore
+
+      - name: Upload SARIF (secrets)
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-secrets.sarif
+          category: trivy/fs/secrets
+
+      # ---------------------------------
+      # Dependencies + misconfig (SARIF)
+      # ---------------------------------
+      - name: Trivy vuln & misconfig scan (SARIF)
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig
+          ignore-unfixed: true
+          severity: CRITICAL
+          format: sarif
+          output: trivy-vuln-misconfig.sarif
+          trivyignores: .trivyignore
+
+      - name: Upload SARIF (vuln & misconfig)
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-vuln-misconfig.sarif
+          category: trivy/fs/vuln-misconfig
+
+      # ---------------------------------
+      # Helm / Kubernetes IaC
+      # Цель: SARIF всегда загрузить + gate валит на CRITICAL с читабельным логом
+      # ---------------------------------
+      - name: Trivy Helm scan (SARIF, non-blocking)
+        if: hashFiles('helm/**/Chart.yaml') != ''
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: config
+          scan-ref: helm
+          severity: CRITICAL
+          exit-code: "0"
+          format: sarif
+          output: trivy-helm.sarif
+          trivyignores: .trivyignore
+
+      - name: Upload SARIF (helm)
+        if: always() && hashFiles('helm/**/Chart.yaml') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-helm.sarif
+          category: trivy/config/helm
+
+      - name: Trivy Helm gate (table)
+        if: hashFiles('helm/**/Chart.yaml') != ''
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: config
+          scan-ref: helm
+          severity: CRITICAL
+          exit-code: "1"
+          format: table
+          trivyignores: .trivyignore
+
+      # ---------------------------------
+      # Terraform security scan
+      # Аналогично: SARIF всегда загрузить + gate валит на CRITICAL с читабельным логом
+      # ---------------------------------
+      - name: Trivy Terraform scan (SARIF, non-blocking)
+        if: hashFiles('**/*.tf') != ''
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: CRITICAL
+          exit-code: "0"
+          format: sarif
+          output: trivy-terraform.sarif
+          trivyignores: .trivyignore
+
+      - name: Upload SARIF (terraform)
+        if: always() && hashFiles('**/*.tf') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-terraform.sarif
+          category: trivy/config/terraform
+
+      - name: Trivy Terraform gate (table)
+        if: hashFiles('**/*.tf') != ''
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: CRITICAL
+          exit-code: "1"
+          format: table
+          trivyignores: .trivyignore
+
+      # -----------------------
+      # Terraform validate
+      # -----------------------
+      - name: Setup Terraform
+        if: hashFiles('infra/terraform/**/*.tf') != ''
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init (no backend)
+        if: hashFiles('infra/terraform/**/*.tf') != ''
+        working-directory: infra/terraform
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        if: hashFiles('infra/terraform/**/*.tf') != ''
+        working-directory: infra/terraform
+        run: terraform validate

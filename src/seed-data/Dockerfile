@@ -8,4 +8,6 @@ COPY . .
 
 RUN python make-data.py
 
+USER app
+
 CMD ["/seed/generate-votes.sh"]

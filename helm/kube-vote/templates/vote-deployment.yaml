@@ -25,6 +25,14 @@ spec:
             - name: http
               containerPort: {{ .Values.vote.service.targetPort }}
               protocol: TCP
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           {{- with .Values.probes.liveness }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

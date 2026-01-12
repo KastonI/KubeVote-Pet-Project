@@ -22,4 +22,6 @@ WORKDIR /app
 
 COPY --from=build /app .
 
+USER app
+
 ENTRYPOINT ["dotnet", "Worker.dll"]

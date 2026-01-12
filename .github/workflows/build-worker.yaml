@@ -1,4 +1,4 @@
-name: worker image -> GHCR -> update Helm values
+name: Worker Image -> GHCR -> update Helm values
 
 on:
   push:
@@ -7,6 +7,10 @@ on:
     paths:
       - "src/worker/**"
       - ".github/workflows/build-worker.yaml"
+  pull_request:
+    branches:
+      - master
+      - gitops
   workflow_dispatch:
 
 env:

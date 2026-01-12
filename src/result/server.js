@@ -63,13 +63,11 @@ function collectVotesFromResult(result) {
   return votes;
 }
 
-app.use(cookieParser());
-app.use(express.urlencoded());
-app.use(express.static(__dirname + '/views'));
+var path = require('path');
 
-app.get('/', function (req, res) {
-  res.sendFile(path.resolve(__dirname + '/views/index.html'));
-});
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'views')));
 
 server.listen(port, function () {
   var port = server.address().port;

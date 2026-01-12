@@ -1,4 +1,4 @@
-name: vote image -> GHCR -> update Helm values
+name: Vote Image -> GHCR -> update Helm values
 
 on:
   push:
@@ -7,6 +7,10 @@ on:
     paths:
       - "src/vote/**"
       - ".github/workflows/build-vote.yaml"
+  pull_request:
+    branches:
+      - master
+      - gitops
   workflow_dispatch:
 
 env:

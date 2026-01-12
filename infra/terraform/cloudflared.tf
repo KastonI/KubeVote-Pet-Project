@@ -21,7 +21,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "config" {
       service  = "http://kubevote-result:80"
       }, {
       hostname = "argocd.${var.domain}"
-      serive = "https://argocd-server.argocd.svc.cluster.local"
+      service = "https://argocd-server.argocd.svc.cluster.local"
       }, {
         service = "http_status:404"
       }
