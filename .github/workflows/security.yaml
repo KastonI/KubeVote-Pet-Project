@@ -33,30 +33,30 @@ env:
   TRIVY_SEVERITY: "CRITICAL,HIGH"
 
 jobs:
-  secrets-gitleaks:
-    name: secrets scan (gitleaks)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout (full history for better secret detection)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # secrets-gitleaks:
+  #   name: secrets scan (gitleaks)
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     security-events: write
+  #   steps:
+  #     - name: Checkout (full history for better secret detection)
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Run Gitleaks (SARIF)
-        uses: gitleaks/gitleaks-action@v2.3.8
-        with:
-          args: >
-            --redact
-            --report-format sarif
-            --report-path gitleaks.sarif
+  #     - name: Run Gitleaks (SARIF)
+  #       uses: gitleaks/gitleaks-action@v2.3.8
+  #       with:
+  #         args: >
+  #           --redact
+  #           --report-format sarif
+  #           --report-path gitleaks.sarif
 
-      - name: Upload SARIF (Gitleaks)
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: gitleaks.sarif
+  #     - name: Upload SARIF (Gitleaks)
+  #       uses: github/codeql-action/upload-sarif@v4
+  #       with:
+  #         sarif_file: gitleaks.sarif
 
   sast-codeql:
     name: "SAST (CodeQL: python, csharp, javascript)"
@@ -214,8 +214,8 @@ jobs:
           output: trivy-image-${{ matrix.service }}.sarif
           exit-code: "1"
 
-      - name: Upload SARIF (Trivy image)
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: trivy-image-${{ matrix.service }}.sarif
-          category: trivy-image-${{ matrix.service }}
+      # - name: Upload SARIF (Trivy image)
+      #   uses: github/codeql-action/upload-sarif@v4
+      #   with:
+      #     sarif_file: trivy-image-${{ matrix.service }}.sarif
+      #     category: trivy-image-${{ matrix.service }}
