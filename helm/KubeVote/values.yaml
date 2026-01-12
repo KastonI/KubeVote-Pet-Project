@@ -35,7 +35,7 @@ vote:
   image:
     repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:240da49c88ff2809cbd59e3f99970c2b7a43e4b47f8177da5aca4168906aba44"
+    digest: "sha256:1e3fa364c3014cae5236eb5b7b2b339ddeb130fe00991d45a73cddd355364dc1"
   podAnnotations: {}
   service:
     type: NodePort
