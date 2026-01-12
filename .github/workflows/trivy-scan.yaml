@@ -16,9 +16,9 @@ env:
 
 jobs:
   security-scan:
-    name: Trivy security gate (repo + IaC)
+    name: Secrets scan (SARIF)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -26,9 +26,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # -----------------------
-      # Secrets scan (SARIF)
-      # -----------------------
       - name: Trivy secrets scan (SARIF)
         uses: aquasecurity/trivy-action@0.33.1
         with:
@@ -46,9 +43,12 @@ jobs:
           sarif_file: trivy-secrets.sarif
           category: trivy/fs/secrets
 
-      # ---------------------------------
-      # Dependencies + misconfig (SARIF)
-      # ---------------------------------
+  misconfig-scan:
+    name: Dependencies + misconfig (SARIF)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
       - name: Trivy vuln & misconfig scan (SARIF)
         uses: aquasecurity/trivy-action@0.33.1
         with:
@@ -68,10 +68,12 @@ jobs:
           sarif_file: trivy-vuln-misconfig.sarif
           category: trivy/fs/vuln-misconfig
 
-      # ---------------------------------
-      # Helm / Kubernetes IaC
-      # Цель: SARIF всегда загрузить + gate валит на CRITICAL с читабельным логом
-      # ---------------------------------
+  helm-iac-scan:
+    name: Helm / Kubernetes IaC
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
       - name: Trivy Helm scan (SARIF, non-blocking)
         if: hashFiles('helm/**/Chart.yaml') != ''
         continue-on-error: true
@@ -107,6 +109,12 @@ jobs:
       # Terraform security scan
       # Аналогично: SARIF всегда загрузить + gate валит на CRITICAL с читабельным логом
       # ---------------------------------
+  terraform-scan:
+    name: Terraform security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
       - name: Trivy Terraform scan (SARIF, non-blocking)
         if: hashFiles('**/*.tf') != ''
         continue-on-error: true
@@ -141,6 +149,12 @@ jobs:
       # -----------------------
       # Terraform validate
       # -----------------------
+  terraform-validate:
+    name: Terraform validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
       - name: Setup Terraform
         if: hashFiles('infra/terraform/**/*.tf') != ''
         uses: hashicorp/setup-terraform@v3
