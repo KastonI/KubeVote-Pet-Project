@@ -108,7 +108,7 @@ jobs:
 
       # 1) Secrets (Trivy secret scanner) — дублирует gitleaks, но ловит и конфиги/артефакты
       - name: Trivy FS (secrets)
-        uses: aquasecurity/trivy-action@v0.33.1
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: fs
           scan-ref: .
@@ -125,7 +125,7 @@ jobs:
 
       # 2) Vulnerabilities in deps + misconfig (K8s manifests, Dockerfiles, etc.)
       - name: Trivy FS (vuln + misconfig)
-        uses: aquasecurity/trivy-action@v0.33.1
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: fs
           scan-ref: .
@@ -144,7 +144,7 @@ jobs:
 
       # 3) Helm chart / IaC scan (если helm/ есть)
       - name: Trivy config (Helm/IaC)
-        uses: aquasecurity/trivy-action@v0.33.1
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: config
           scan-ref: helm
@@ -206,7 +206,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
 
       - name: Trivy image (vuln)
-        uses: aquasecurity/trivy-action@v0.33.1
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: local/${{ matrix.service }}:${{ github.sha }}
           scanners: vuln
