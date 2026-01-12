@@ -45,6 +45,7 @@ def hello():
         hostname=hostname,
         vote=vote,
     ))
+# codeql[py/cookie-injection]
     resp.set_cookie('voter_id', voter_id)
     return resp
 
