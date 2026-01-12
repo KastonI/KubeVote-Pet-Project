@@ -85,7 +85,7 @@ worker:
   image:
     repository: ghcr.io/kastoni/kubevote-worker
     #    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
-    digest: sha256:ed8d51f8ca79bf779130b518138e91bb754bfdc6d370d749a6d30da967a5c166
+    digest: sha256:66bda8fd48064b634100662b4873c9c377afb594e55508f2c310fb633bcac3f7
   podAnnotations: {}
   resources:
     requests:
