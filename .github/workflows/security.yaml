@@ -73,10 +73,7 @@ jobs:
       - name: Init CodeQL
         uses: github/codeql-action/init@v4
         with:
-          languages: |
-            python
-            csharp
-            javascript
+          languages: python,csharp,javascript
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
