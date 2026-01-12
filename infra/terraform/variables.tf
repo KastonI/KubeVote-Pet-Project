@@ -14,12 +14,6 @@ variable "cloudflare_api_token" {
   sensitive = true
 }
 
-variable "cloudflare_account_id" {
-  type      = string
-  sensitive = true
-  default   = "21d5f7467434911098b83ab93752b470"
-}
-
 variable "domain" {
   type = string
 }

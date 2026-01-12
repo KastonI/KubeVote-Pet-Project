@@ -7,6 +7,10 @@ on:
     paths:
       - "src/worker/**"
       - ".github/workflows/build-worker.yaml"
+  pull_request:
+    branches:
+      - master
+      - gitops
   workflow_dispatch:
 
 env:

@@ -6,6 +6,10 @@ on:
     paths:
       - "src/result/**"
       - ".github/workflows/build-result.yaml"
+  pull_request:
+    branches:
+      - master
+      - gitops
   workflow_dispatch:
 
 env:

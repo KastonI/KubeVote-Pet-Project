@@ -1,0 +1,222 @@
+name: security gate (secrets, SAST, deps, images, IaC)
+
+on:
+  pull_request:
+    branches: [ "master", "gitops" ]
+    paths:
+      - "src/vote/**"
+      - "src/worker/**"
+      - "src/result/**"
+      - "helm/**"
+      - ".github/workflows/security-gate.yaml"
+  push:
+    branches: [ "master" ]
+    paths:
+      - "src/vote/**"
+      - "src/worker/**"
+      - "src/result/**"
+      - "helm/**"
+      - ".github/workflows/security-gate.yaml"
+  schedule:
+    # Weekly re-scan (new CVE в старых зависимостях)
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: security-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  TRIVY_SEVERITY: "CRITICAL,HIGH"
+
+jobs:
+  secrets-gitleaks:
+    name: secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout (full history for better secret detection)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks (SARIF)
+        uses: gitleaks/gitleaks-action@v2.3.8
+        with:
+          args: >
+            --redact
+            --report-format sarif
+            --report-path gitleaks.sarif
+
+      - name: Upload SARIF (Gitleaks)
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: gitleaks.sarif
+
+  sast-codeql:
+    name: SAST (CodeQL: python, csharp, javascript)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # CodeQL v4 рекомендуется (Node.js 24 runtime), v3 будет deprecated в Dec 2026.
+      - name: Init CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: python,csharp,javascript
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      # Для C# лучше явно собрать (monorepo/autobuild часто промахивается)
+      - name: Build worker (.NET)
+        working-directory: src/worker
+        run: |
+          dotnet restore
+          dotnet build -c Release --no-restore
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:multi"
+
+  iac-and-repo-scan:
+    name: Trivy repo scan (deps/vuln + misconfig + secrets) + Helm/IaC
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1) Secrets (Trivy secret scanner) — дублирует gitleaks, но ловит и конфиги/артефакты
+      - name: Trivy FS (secrets)
+        uses: aquasecurity/trivy-action@v0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: secret
+          format: sarif
+          output: trivy-fs-secrets.sarif
+          exit-code: "1"
+
+      - name: Upload SARIF (Trivy FS secrets)
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-fs-secrets.sarif
+          category: trivy-fs-secrets
+
+      # 2) Vulnerabilities in deps + misconfig (K8s manifests, Dockerfiles, etc.)
+      - name: Trivy FS (vuln + misconfig)
+        uses: aquasecurity/trivy-action@v0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig
+          ignore-unfixed: true
+          severity: ${{ env.TRIVY_SEVERITY }}
+          format: sarif
+          output: trivy-fs-vuln-misconfig.sarif
+          exit-code: "1"
+
+      - name: Upload SARIF (Trivy FS vuln+misconfig)
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-fs-vuln-misconfig.sarif
+          category: trivy-fs-vuln-misconfig
+
+      # 3) Helm chart / IaC scan (если helm/ есть)
+      - name: Trivy config (Helm/IaC)
+        uses: aquasecurity/trivy-action@v0.33.1
+        with:
+          scan-type: config
+          scan-ref: helm
+          severity: ${{ env.TRIVY_SEVERITY }}
+          format: sarif
+          output: trivy-helm.sarif
+          exit-code: "1"
+
+      - name: Upload SARIF (Trivy Helm)
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-helm.sarif
+          category: trivy-helm
+
+  container-images:
+    name: Dockerfile + image scan (hadolint + trivy image)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: vote
+            context: ./src/vote
+            dockerfile: ./src/vote/Dockerfile
+          - service: worker
+            context: ./src/worker
+            dockerfile: ./src/worker/Dockerfile
+          - service: result
+            context: ./src/result
+            dockerfile: ./src/result/Dockerfile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Hadolint (Dockerfile)
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: ${{ matrix.dockerfile }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3.12.0
+
+      # Build single-arch and LOAD to scan locally (multi-arch "load" по умолчанию не работает на GH runners)
+      # Docker docs: "test before push" паттерн. :contentReference[oaicite:4]{index=4}
+      - name: Build image (local load, amd64)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          load: true
+          push: false
+          tags: local/${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+      - name: Trivy image (vuln)
+        uses: aquasecurity/trivy-action@v0.33.1
+        with:
+          image-ref: local/${{ matrix.service }}:${{ github.sha }}
+          scanners: vuln
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: ${{ env.TRIVY_SEVERITY }}
+          format: sarif
+          output: trivy-image-${{ matrix.service }}.sarif
+          exit-code: "1"
+
+      - name: Upload SARIF (Trivy image)
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-image-${{ matrix.service }}.sarif
+          category: trivy-image-${{ matrix.service }}
