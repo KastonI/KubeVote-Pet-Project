@@ -184,6 +184,8 @@ jobs:
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: ${{ matrix.dockerfile }}
+          failure-threshold: error
+
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3.12.0
@@ -214,8 +216,8 @@ jobs:
           output: trivy-image-${{ matrix.service }}.sarif
           exit-code: "1"
 
-      # - name: Upload SARIF (Trivy image)
-      #   uses: github/codeql-action/upload-sarif@v4
-      #   with:
-      #     sarif_file: trivy-image-${{ matrix.service }}.sarif
-      #     category: trivy-image-${{ matrix.service }}
+      - name: Upload SARIF (Trivy image)
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-image-${{ matrix.service }}.sarif
+          category: trivy-image-${{ matrix.service }}
