@@ -59,28 +59,30 @@ jobs:
           sarif_file: gitleaks.sarif
 
   sast-codeql:
-    name: SAST (CodeQL: python, csharp, javascript)
+    name: "SAST (CodeQL: python, csharp, javascript)"
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
       actions: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # CodeQL v4 рекомендуется (Node.js 24 runtime), v3 будет deprecated в Dec 2026.
       - name: Init CodeQL
         uses: github/codeql-action/init@v4
         with:
-          languages: python,csharp,javascript
+          languages: |
+            python
+            csharp
+            javascript
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      # Для C# лучше явно собрать (monorepo/autobuild часто промахивается)
       - name: Build worker (.NET)
         working-directory: src/worker
         run: |
