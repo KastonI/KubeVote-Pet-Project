@@ -132,15 +132,14 @@ jobs:
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
           set -euo pipefail
-          cd "${PATH_TO_HELM}"
 
           changed=0
-          for f in ../..//build-info/*.json build-info/*.json; do
+          for f in build-info/*.json; do
             [ -f "$f" ] || continue
             service="$(jq -r '.service' "$f")"
             digest="$(jq -r '.digest' "$f")"
 
-            yq -i ".${service}.image.digest = \"${digest}\"" ./values.yaml
+            yq -i ".${service}.image.digest = \"${digest}\"" "${PATH_TO_HELM}/values.yaml"
             changed=1
           done
 
@@ -152,7 +151,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add ./values.yaml
+          git add "${PATH_TO_HELM}/values.yaml"
           git commit -m "chore(images): bump vote/result/worker image digests" || exit 0
 
           git pull --rebase origin master
