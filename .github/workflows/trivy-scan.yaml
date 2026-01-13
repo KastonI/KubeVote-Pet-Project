@@ -29,6 +29,8 @@ jobs:
       - name: Gitleaks secrets scan
         continue-on-error: true
         uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload SARIF (secrets)
         if: always()
