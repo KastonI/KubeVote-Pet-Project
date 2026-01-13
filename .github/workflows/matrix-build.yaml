@@ -213,4 +213,4 @@ jobs:
             --head ci/update-helm-values \
             || echo "PR already exists"
 
-          gh pr merge --auto --merge || true
+          gh pr merge --squash --delete-branch || true
