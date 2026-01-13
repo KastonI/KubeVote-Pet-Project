@@ -21,6 +21,14 @@ spec:
         - name: "{{ .Values.result.name | default "result" }}"
           image: "{{ .Values.result.image.repository }}@{{ .Values.result.image.digest }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: {{ .Values.result.service.targetPort }}
