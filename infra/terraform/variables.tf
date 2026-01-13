@@ -22,3 +22,17 @@ variable "cloudflare_account_id" {
 variable "domain" {
   type = string
 }
+
+
+
+
+
+############ TEST #############
+
+variable "aws_key" {
+  default = "AKIAIOSFODNN7EXAMPLE"
+}
+
+variable "aws_secret" {
+  default = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+}
