@@ -39,13 +39,13 @@ jobs:
           SERVICES=()
 
           if echo "$CHANGED_FILES" | grep -q '^src/vote/'; then
-            SERVICES+=('"vote"')
+            SERVICES+=("vote")
           fi
           if echo "$CHANGED_FILES" | grep -q '^src/result/'; then
-            SERVICES+=('"result"')
+            SERVICES+=("result")
           fi
           if echo "$CHANGED_FILES" | grep -q '^src/worker/'; then
-            SERVICES+=('"worker"')
+            SERVICES+=("worker")
           fi
 
           if [[ ${#SERVICES[@]} -eq 0 ]]; then
@@ -54,7 +54,9 @@ jobs:
             exit 0
           fi
 
-          MATRIX=$(jq -nc --argjson services "[${SERVICES[*]}]" '{service: $services}')
+          MATRIX=$(printf '%s\n' "${SERVICES[@]}" \
+            | jq -R . \
+            | jq -s '{service: .}')
 
           echo "has_changes=true" >> "$GITHUB_OUTPUT"
           echo "Detected matrix: ${SERVICES[*]}"
