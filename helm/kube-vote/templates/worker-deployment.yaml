@@ -36,3 +36,9 @@ spec:
           env:
             - name: REDIS_HOST
               value: "{{ .Values.vote.redis_host }}"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
