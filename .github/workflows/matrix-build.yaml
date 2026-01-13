@@ -212,3 +212,5 @@ jobs:
             --base master \
             --head ci/update-helm-values \
             || echo "PR already exists"
+
+          gh pr merge --auto --merge || true
