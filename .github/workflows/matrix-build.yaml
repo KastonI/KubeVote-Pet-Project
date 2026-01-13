@@ -50,7 +50,7 @@ jobs:
             exit 0
           fi
 
-          MATRIX=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -s '{service: .}')
+          MATRIX=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -s '.')
 
           echo "Detected matrix: $MATRIX"
 
