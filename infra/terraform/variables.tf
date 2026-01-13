@@ -36,3 +36,5 @@ variable "aws_key" {
 variable "aws_secret" {
   default = "abcdEFGHijklMNOPqrstUVWXyz0123w56789abcd"
 }
+
+AWS_SECRET_ACCESS_KEY=abcdabcdabcdabcdabcdabcdabcdabcdabcd
