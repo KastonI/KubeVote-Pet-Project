@@ -36,7 +36,7 @@ vote:
   image:
     repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:f0de22127c7be2c7ba5c029249235f6edb41f62f3462cd2786e8e92bf0bd057d"
+    digest: "sha256:ccdc5a8113393bd2a24e8222801601ac7d40b8b17384022f6c3f8c8a7e648840"
   podAnnotations: {}
   service:
     type: NodePort
@@ -60,7 +60,7 @@ result:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-result
-    digest: sha256:3c9f2e459129693be95dcff582664e77e39500c7f6f8007b02ed1047ba039f40
+    digest: sha256:497a38736abcf665a0f39a4ec30602c4d194b5307c013507a43bbb097213e832
     # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   service:
@@ -86,7 +86,7 @@ worker:
   image:
     repository: ghcr.io/kastoni/kubevote-worker
     #    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
-    digest: sha256:a1442e55d203938fa9bf0fa49dde9c5441fe6a46ce0c0236f75b38d5e25e57a6
+    digest: sha256:0e613d205b7b4db7d35f580de95bbeabc78e2f0cd11a2976375b1012af389537
   podAnnotations: {}
   resources:
     requests:
