@@ -33,6 +33,8 @@ jobs:
 
           CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
 
+          echo "$CHANGED_FILES"
+
           SERVICES=()
 
           if echo "$CHANGED_FILES" | grep -q '^src/vote/'; then
