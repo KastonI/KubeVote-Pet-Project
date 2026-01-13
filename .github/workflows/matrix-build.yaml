@@ -175,10 +175,11 @@ jobs:
 
       - name: Update Helm values with digests
         env:
+          GH_TOKEN: ${{ github.token }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
           set -euo pipefail
-          
+
           git fetch origin ci/update-helm-values || true
           git checkout -B ci/update-helm-values
 
