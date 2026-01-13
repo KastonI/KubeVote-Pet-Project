@@ -96,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: build-info-${{ matrix.service }}
-          path: ${{ matrix.service }}.json
+          path: build-info-${{ matrix.service }}.json
           if-no-files-found: error
 
   update_helm_values:
@@ -136,7 +136,7 @@ jobs:
           ls -lah
 
           changed=0
-          for f in build-info/*.json; do
+          for f in build-info-*.json; do
             [ -f "$f" ] || continue
             service="$(jq -r '.service' "$f")"
             digest="$(jq -r '.digest' "$f")"
