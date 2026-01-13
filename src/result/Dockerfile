@@ -17,5 +17,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-
 CMD ["node", "server.js"]
