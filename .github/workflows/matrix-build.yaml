@@ -38,15 +38,15 @@ jobs:
             exit 0
           fi
 
-          PARENTS_COUNT=$(git rev-list --parents -n 1 HEAD | wc -w)
-          if [[ "$PARENTS_COUNT" -gt 2 ]]; then
-            echo "Merge commit detected — building all services"
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            echo "matrix=$ALL_SERVICES" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          PARENTS=($(git rev-list --parents -n 1 HEAD))
 
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          if [[ ${#PARENTS[@]} -eq 2 ]]; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            BASE=${PARENTS[1]}
+            MERGED=${PARENTS[2]}
+            CHANGED_FILES=$(git diff --name-only "$BASE" "$MERGED")
+          fi
 
           SERVICES=()
 
