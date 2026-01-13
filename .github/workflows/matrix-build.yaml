@@ -178,7 +178,8 @@ jobs:
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
           set -euo pipefail
-
+          
+          git fetch origin ci/update-helm-values || true
           git checkout -B ci/update-helm-values
 
           changed=0
