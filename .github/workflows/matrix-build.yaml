@@ -202,12 +202,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add "${PATH_TO_HELM}/values.yaml"
-          git commit -m "chore(images): bump image digests" || exit 0
+          git commit -m "chore(images): bump image digests for images ${{ matrix.service }}" || exit 0
 
           git push --force-with-lease origin ci/update-helm-values 
 
           gh pr create \
-            --title "chore(images): bump image digests" \
+            --title "chore(images): bump image digests for images ${{ matrix.service }}" \
             --body "Automated update from CI" \
             --base master \
             --head ci/update-helm-values \
