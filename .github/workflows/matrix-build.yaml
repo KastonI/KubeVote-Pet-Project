@@ -45,7 +45,7 @@ jobs:
             SERVICES+=('"worker"')
           fi
 
-          MATRIX=$(printf '%s\n' "${SERVICES[@]}" | jq -s '{service: .}')
+          MATRIX=$(printf '%s\n' "${SERVICES[@]}" | jq -cs '{service: .}')
 
           echo "Detected matrix: $MATRIX"
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
