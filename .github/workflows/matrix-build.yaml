@@ -31,12 +31,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }}...HEAD)
+          CHANGED_FILES=$(git diff --name-only master...HEAD)
 
           echo "$CHANGED_FILES"
 
           echo "DEBUG:"
-          git diff --name-only origin/main...HEAD | sed 's/^/ - /'
+          git diff --name-only origin/master...HEAD | sed 's/^/ - /'
 
 
           SERVICES=()
