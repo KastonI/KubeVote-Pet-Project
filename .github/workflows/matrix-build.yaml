@@ -30,6 +30,15 @@ jobs:
         run: |
           set -euo pipefail
 
+          ALL_SERVICES='["vote","result","worker"]'
+
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "Tag push detected — building all services"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "matrix=$ALL_SERVICES" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
 
           echo "$CHANGED_FILES"
@@ -177,14 +186,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
-          SERVICES: ${{ needs.detect_changes.outputs.matrix }}
         run: |
           set -euo pipefail
 
           git fetch origin ci/update-helm-values || true
           git checkout -B ci/update-helm-values
 
-          SERVICES_LIST=$(echo "$SERVICES" | jq -r '. | join(", ")')
           changed=0
           for f in build-info/*.json; do
             [ -f "$f" ] || continue
@@ -204,12 +211,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add "${PATH_TO_HELM}/values.yaml"
-          git commit -m "chore(images): bump image digests for images ${SERVICES_LIST}" || exit 0
+          git commit -m "chore(images): bump image digests for images" || exit 0
 
           git push --force-with-lease origin ci/update-helm-values 
 
           gh pr create \
-            --title "chore(images): bump image digests for images ${SERVICES_LIST}" \
+            --title "chore(images): bump image digests for images" \
             --body "Automated update from CI" \
             --base master \
             --head ci/update-helm-values \
