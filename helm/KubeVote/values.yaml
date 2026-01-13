@@ -58,8 +58,8 @@ result:
   name: result
   replicaCount: 1
   image:
-    repository: ghcr.io/KastonI/kubevote-result
-    digest: sha256:dcdf598101e2c95b55acafccd6fdce3ded7beae1ff9ba3be1e117dd73b6cc30b
+    repository: ghcr.io/kastoni/kubevote-result
+    digest: sha256:776bdb1e6fc65cb0a8b9f37795259e615fc48847391ed5e99fed186d27e33d9a
     # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   service:
