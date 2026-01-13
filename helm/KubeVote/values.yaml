@@ -4,6 +4,9 @@ global:
   imageRegistry: ""
   imageTag: ""
   imagePullPolicy: IfNotPresent
+
+revisionHistoryLimit: 2
+
 probes:
   liveness:
     httpGet:

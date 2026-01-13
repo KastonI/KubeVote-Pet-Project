@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "KubeVote.labels" . | nindent 4 }}
 spec:
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.result.replicaCount }}
   {{- end }}
