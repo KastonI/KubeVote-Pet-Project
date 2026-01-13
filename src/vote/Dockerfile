@@ -15,11 +15,12 @@ FROM base AS prod
 
 RUN useradd -m -u 10001 appuser
 
-COPY --chown=appuser:appuser . .
+COPY --chown=app:app . .
 
 ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8080
 
-USER appu
+USER app
+
 CMD ["gunicorn", "app:app", "-b", "0.0.0.0:8080", "--log-file", "-", "--access-logfile", "-", "--workers", "4"]
