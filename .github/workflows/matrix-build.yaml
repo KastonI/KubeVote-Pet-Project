@@ -57,146 +57,146 @@ jobs:
           echo "Detected matrix: $MATRIX"
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
-  # build_and_push:
-  #   name: Build & Push (${{ matrix.service }})
-  #   if: needs.detect_changes.outputs.has_changes == 'true'
-  #   needs: detect_changes
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #     id-token: write
+  build_and_push:
+    name: Build & Push (${{ matrix.service }})
+    if: needs.detect_changes.outputs.has_changes == 'true'
+    needs: detect_changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       service: ${{ fromJson(needs.detect_changes.outputs.matrix) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJson(needs.detect_changes.outputs.matrix) }}
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  #     - uses: docker/setup-qemu-action@v3
-  #     - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-  #     - name: Login GHCR
-  #       # if: github.event_name != 'pull_request'
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ${{ env.REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login GHCR
+        # if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Meta tags
-  #       id: meta
-  #       uses: docker/metadata-action@v5
-  #       with:
-  #         images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
-  #         tags: |
-  #           type=raw,value=latest
-  #           type=sha,format=short
-  #           type=sha,format=long
-  #           type=semver,pattern={{version}},prefix=v
-  #           type=semver,pattern={{major}}.{{minor}},prefix=v
-  #           type=semver,pattern={{major}},prefix=v
-  #         labels: |
-  #           org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-  #           org.opencontainers.image.revision=${{ github.sha }}
-  #           org.opencontainers.image.version=${{ steps.meta.outputs.version }}
-  #           org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+      - name: Meta tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+            type=sha,format=long
+            type=semver,pattern={{version}},prefix=v
+            type=semver,pattern={{major}}.{{minor}},prefix=v
+            type=semver,pattern={{major}},prefix=v
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
 
-  #     - name: Build & Push
-  #       id: build
-  #       uses: docker/build-push-action@v6
-  #       with:
-  #         context: ./src/${{ matrix.service }}
-  #         file: ./src/${{ matrix.service }}/Dockerfile
-  #         platforms: linux/amd64,linux/arm64
-  #         push: true
-  #         tags: ${{ steps.meta.outputs.tags }}
-  #         labels: ${{ steps.meta.outputs.labels }}
-  #         cache-from: type=gha,scope=${{ matrix.service }}
-  #         cache-to: type=gha,mode=max,scope=${{ matrix.service }}
-  #         sbom: true
-  #         provenance: mode=max
+      - name: Build & Push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/${{ matrix.service }}
+          file: ./src/${{ matrix.service }}/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          sbom: true
+          provenance: mode=max
 
-  #     - name: Save build info (digest)
-  #       # if: github.event_name != 'pull_request'
-  #       env:
-  #         SERVICE: ${{ matrix.service }}
-  #         IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
-  #         DIGEST: ${{ steps.build.outputs.digest }}
-  #       run: |
-  #         cat > ${SERVICE}.json <<EOF
-  #         {"service":"${SERVICE}","image":"${IMAGE}","digest":"${DIGEST}"}
-  #         EOF
+      - name: Save build info (digest)
+        # if: github.event_name != 'pull_request'
+        env:
+          SERVICE: ${{ matrix.service }}
+          IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          cat > ${SERVICE}.json <<EOF
+          {"service":"${SERVICE}","image":"${IMAGE}","digest":"${DIGEST}"}
+          EOF
 
-  #     - name: Upload build info artifact
-  #       # if: github.event_name != 'pull_request'
-  #       uses: actions/upload-artifact@v6
-  #       with:
-  #         name: build-info-${{ matrix.service }}
-  #         path: ${{ matrix.service }}.json
-  #         if-no-files-found: error
+      - name: Upload build info artifact
+        # if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-info-${{ matrix.service }}
+          path: ${{ matrix.service }}.json
+          if-no-files-found: error
 
-  # update_helm_values:
-  #   name: Update Helm values
-  #   runs-on: ubuntu-latest
-  #   needs: build_and_push
-  #   if: needs.detect_changes.outputs.has_changes == 'true'
-  #   # if: github.event_name != 'pull_request'
-  #   permissions:
-  #     contents: write
+  update_helm_values:
+    name: Update Helm values
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    if: needs.detect_changes.outputs.has_changes == 'true'
+    # if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
 
-  #   concurrency:
-  #     group: gitops-values-update
-  #     cancel-in-progress: false
+    concurrency:
+      group: gitops-values-update
+      cancel-in-progress: false
 
-  #   steps:
-  #     - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: Download build info artifacts
-  #       uses: actions/download-artifact@v6
-  #       with:
-  #         pattern: build-info-*
-  #         merge-multiple: true
-  #         path: build-info
+      - name: Download build info artifacts
+        uses: actions/download-artifact@v6
+        with:
+          pattern: build-info-*
+          merge-multiple: true
+          path: build-info
 
-  #     - name: Install yq (pinned)
-  #       run: |
-  #         YQ_VERSION="v4.50.1"
-  #         curl -sSL -o /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
-  #         chmod +x /usr/local/bin/yq
-  #         yq -V
+      - name: Install yq (pinned)
+        run: |
+          YQ_VERSION="v4.50.1"
+          curl -sSL -o /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
+          chmod +x /usr/local/bin/yq
+          yq -V
 
-  #     - name: Update Helm values with digests
-  #       env:
-  #         PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
-  #       run: |
-  #         set -euo pipefail
+      - name: Update Helm values with digests
+        env:
+          PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
+        run: |
+          set -euo pipefail
 
-  #         changed=0
-  #         for f in build-info/*.json; do
-  #           [ -f "$f" ] || continue
-  #           service="$(jq -r '.service' "$f")"
-  #           digest="$(jq -r '.digest' "$f")"
+          changed=0
+          for f in build-info/*.json; do
+            [ -f "$f" ] || continue
+            service="$(jq -r '.service' "$f")"
+            digest="$(jq -r '.digest' "$f")"
 
-  #           yq -i ".${service}.image.digest = \"${digest}\"" "${PATH_TO_HELM}/values.yaml"
-  #           changed=1
-  #         done
+            yq -i ".${service}.image.digest = \"${digest}\"" "${PATH_TO_HELM}/values.yaml"
+            changed=1
+          done
 
-  #         if [ "$changed" -eq 0 ]; then
-  #           echo "No build-info json files found; nothing to update."
-  #           exit 0
-  #         fi
+          if [ "$changed" -eq 0 ]; then
+            echo "No build-info json files found; nothing to update."
+            exit 0
+          fi
 
-  #         git config user.name "github-actions[bot]"
-  #         git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-  #         git add "${PATH_TO_HELM}/values.yaml"
-  #         git commit -m "chore(images): bump vote/result/worker image digests" || exit 0
+          git add "${PATH_TO_HELM}/values.yaml"
+          git commit -m "chore(images): bump vote/result/worker image digests" || exit 0
 
-  #         git pull --rebase origin master
-  #         git push origin master && break
+          git pull --rebase origin master
+          git push origin master && break
