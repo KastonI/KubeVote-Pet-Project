@@ -16,7 +16,7 @@ env:
 
 jobs:
   security-scan:
-    name: Secrets scan (SARIF)
+    name: Secrets scan (Gitleaks SARIF)
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -26,22 +26,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Trivy secrets scan (SARIF)
-        uses: aquasecurity/trivy-action@0.33.1
+      - name: Gitleaks secrets scan (SARIF)
+        uses: gitleaks/gitleaks-action@v2
         with:
-          scan-type: fs
-          scan-ref: .
-          scanners: secret
-          format: sarif
-          output: trivy-secrets.sarif
-          trivyignores: .trivyignore
+          args: >
+            detect
+            --source=.
+            --report-format=sarif
+            --report-path=gitleaks.sarif
+            --redact
 
       - name: Upload SARIF (secrets)
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: trivy-secrets.sarif
-          category: trivy/fs/secrets
+          sarif_file: gitleaks.sarif
+          category: gitleaks/fs/secrets
 
   misconfig-scan:
     name: Dependencies + misconfig (SARIF)
