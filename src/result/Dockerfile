@@ -1,10 +1,8 @@
 FROM node:18-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl=7.88.1-10+deb12u14 tini=0.19.0-1+b3 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl tini && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/app
-
-RUN groupadd -g 10001 app && useradd -u 10001 -g 10001 -m app
 
 RUN npm install -g nodemon
 
@@ -16,8 +14,6 @@ COPY . .
 
 ENV PORT=8080
 EXPOSE 8080
-
-USER 10001:10001
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]
