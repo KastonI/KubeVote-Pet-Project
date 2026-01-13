@@ -177,6 +177,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
+          SERVICES: ${{ fromJson(needs.detect_changes.outputs.matrix) }}
         run: |
           set -euo pipefail
 
@@ -202,12 +203,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add "${PATH_TO_HELM}/values.yaml"
-          git commit -m "chore(images): bump image digests for images ${{ matrix.service }}" || exit 0
+          git commit -m "chore(images): bump image digests for images ${SERVICES}" || exit 0
 
           git push --force-with-lease origin ci/update-helm-values 
 
           gh pr create \
-            --title "chore(images): bump image digests for images ${{ matrix.service }}" \
+            --title "chore(images): bump image digests for images ${SERVICES}" \
             --body "Automated update from CI" \
             --base master \
             --head ci/update-helm-values \
