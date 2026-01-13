@@ -177,7 +177,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
-          SERVICES: ${{ fromJson(needs.detect_changes.outputs.matrix) }}
+          SERVICES: ${{ needs.detect_changes.outputs.matrix }}
         run: |
           set -euo pipefail
 
