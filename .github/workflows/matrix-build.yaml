@@ -202,7 +202,7 @@ jobs:
           git add "${PATH_TO_HELM}/values.yaml"
           git commit -m "chore(images): bump image digests" || exit 0
 
-          git push origin ci/update-helm-values
+          git push --force-with-lease origin ci/update-helm-values 
 
           gh pr create \
             --title "chore(images): bump image digests" \
