@@ -96,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: build-info-${{ matrix.service }}
-          path: build-info-${{ matrix.service }}.json
+          path: ${{ matrix.service }}.json
           if-no-files-found: error
 
   update_helm_values:
@@ -119,6 +119,7 @@ jobs:
         with:
           pattern: build-info-*
           merge-multiple: true
+          path: build-info
 
       - name: Install yq (pinned)
         run: |
@@ -136,7 +137,7 @@ jobs:
           ls -lah
 
           changed=0
-          for f in build-info-*.json; do
+          for f in build-info/*.json; do
             [ -f "$f" ] || continue
             service="$(jq -r '.service' "$f")"
             digest="$(jq -r '.digest' "$f")"
