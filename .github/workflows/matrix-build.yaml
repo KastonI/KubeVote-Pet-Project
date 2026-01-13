@@ -180,6 +180,8 @@ jobs:
         run: |
           set -euo pipefail
 
+          git checkout -B ci/update-helm-values
+
           changed=0
           for f in build-info/*.json; do
             [ -f "$f" ] || continue
@@ -199,8 +201,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add "${PATH_TO_HELM}/values.yaml"
-          git commit -m "chore(images): bump vote/result/worker image digests" || exit 0
+          git commit -m "chore(images): bump image digests" || exit 0
 
-          git checkout -b ci/update-helm-values
-          git commit -am "Update Helm values"
           git push origin ci/update-helm-values
