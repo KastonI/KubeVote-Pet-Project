@@ -38,15 +38,11 @@ jobs:
 
           SERVICES=()
 
-          if echo "$CHANGED_FILES" | grep -q '^src/vote/'; then
-            SERVICES+=("vote")
-          fi
-          if echo "$CHANGED_FILES" | grep -q '^src/result/'; then
-            SERVICES+=("result")
-          fi
-          if echo "$CHANGED_FILES" | grep -q '^src/worker/'; then
-            SERVICES+=("worker")
-          fi
+          for svc in vote result worker; do
+            if grep -q "^src/$svc/" <<<"$CHANGED_FILES"; then
+              SERVICES+=("$svc")
+            fi
+          done
 
           if [[ ${#SERVICES[@]} -eq 0 ]]; then
             echo "No changes in src, so rebuilding the container is not required"
@@ -54,13 +50,16 @@ jobs:
             exit 0
           fi
 
-          MATRIX=$(printf '%s\n' "${SERVICES[@]}" \
-            | jq -R . \
-            | jq -s '{service: .}')
+          MATRIX=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -s '{service: .}')
 
-          echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          echo "Detected matrix: ${SERVICES[*]}"
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "Detected matrix: $MATRIX"
+
+          {
+            echo "has_changes=true"
+            echo "matrix<<EOF"
+            echo "$MATRIX"
+            echo "EOF"
+          } >>"$GITHUB_OUTPUT"
 
   build_and_push:
     name: Build & Push (${{ matrix.service }})
