@@ -133,6 +133,8 @@ jobs:
         run: |
           set -euo pipefail
 
+          ls -lah
+
           changed=0
           for f in build-info/*.json; do
             [ -f "$f" ] || continue
