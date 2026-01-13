@@ -30,9 +30,9 @@ variable "domain" {
 ############ TEST #############
 
 variable "aws_key" {
-  default = "AKIAIOSFODNN7EXAMPLE"
+  default = "AKIA123456e8Af234"
 }
 
 variable "aws_secret" {
-  default = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+  default = "abcdEFGHijklMNOPqrstUVWXyz0123w56789abcd"
 }
