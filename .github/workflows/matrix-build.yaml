@@ -14,7 +14,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  PATH_TO_HELM: ./helm/KubeVote
+  PATH_TO_HELM: ./helm/kube-vote
 
 jobs:
   build_and_push:
@@ -64,12 +64,6 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.created=${{ steps.meta.outputs.created }}
-
-      - name: Validate context
-        run: |
-          echo "== ${{matrix.service}} =="
-          ls -lah src/${{ matrix.service }}
-          ls -lah src/${{ matrix.service }}/Dockerfile
 
       - name: Build & Push
         id: build
