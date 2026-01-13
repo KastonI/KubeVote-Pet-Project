@@ -10,7 +10,7 @@ on:
   pull_request:
     branches:
       - master
-      - gitops
+#      - gitops
   workflow_dispatch:
 
 env:
@@ -89,7 +89,7 @@ jobs:
           IMAGE: ${{ env.IMAGE }}
           PATH_TO_HELM: ${{ env.PATH_TO_HELM }}
         run: |
-          git checkout gitops
+          # git checkout gitops
           cd ${{ env.PATH_TO_HELM}}
           # worker.image.repository: ghcr.io/...
           # worker.image.digest: sha256:...
@@ -102,8 +102,10 @@ jobs:
           git commit -m "chore(${{ env.SERVICE }}): bump image to ${IMAGE}@${DIGEST}" || exit 0
 
           for i in 1 2 3 4 5; do
-            git pull --rebase origin gitops
-            git push origin gitops && break
+            # git pull --rebase origin gitops
+            # git push origin gitops && break
+            git pull --rebase origin master
+            git push origin master && break
             echo "Push failed, retrying in 5s..."
             sleep 5
           done

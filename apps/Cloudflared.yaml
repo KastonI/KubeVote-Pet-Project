@@ -11,7 +11,7 @@ spec:
 
   source:
     repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
-    targetRevision: gitops
+    targetRevision: master
     path: helm/Cloudflared
 
   syncPolicy:
