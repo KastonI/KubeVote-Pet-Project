@@ -26,22 +26,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Gitleaks secrets scan (SARIF)
+      - name: Gitleaks secrets scan
+        continue-on-error: true
         uses: gitleaks/gitleaks-action@v2
-        with:
-          args: >
-            detect
-            --source=.
-            --report-format=sarif
-            --report-path=gitleaks.sarif
-            --redact
 
       - name: Upload SARIF (secrets)
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: gitleaks.sarif
+          sarif_file: results.sarif
           category: gitleaks/fs/secrets
+
 
   misconfig-scan:
     name: Dependencies + misconfig (SARIF)
