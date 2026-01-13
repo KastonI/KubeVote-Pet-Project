@@ -83,9 +83,9 @@ worker:
   name: worker
   replicaCount: 1
   image:
-    repository: ghcr.io/KastonI/kubevote-worker
+    repository: ghcr.io/kastoni/kubevote-worker
     #    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
-    digest: sha256:8c4c06daac7dd466aaf43cb8eab9f005077a40376af56fb3e872f368a6694105
+    digest: sha256:52a48f14184037302b585a66d956959193e4ce3317e602065e25afafcf137a34
   podAnnotations: {}
   resources:
     requests:
