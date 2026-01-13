@@ -21,4 +21,5 @@ EXPOSE 8080
 USER 10001:10001
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
+
 CMD ["node", "server.js"]

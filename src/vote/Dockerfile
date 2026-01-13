@@ -13,8 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 FROM base AS prod
 
-RUN useradd -m -u 10001 app
-
 COPY --chown=app:app . .
 
 ENV PYTHONUNBUFFERED=1
