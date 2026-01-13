@@ -67,7 +67,7 @@ jobs:
 
       - name: Validate context
         run: |
-          echo "== ${matrix.service} =="
+          echo "== ${{matrix.service}} =="
           ls -lah src/${{ matrix.service }}
           ls -lah src/${{ matrix.service }}/Dockerfile
 
