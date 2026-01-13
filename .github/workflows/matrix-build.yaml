@@ -65,6 +65,12 @@ jobs:
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.created=${{ steps.meta.outputs.created }}
 
+      - name: Validate context
+        run: |
+          echo "== ${matrix.service} =="
+          ls -lah src/${{ matrix.service }}
+          ls -lah src/${{ matrix.service }}/Dockerfile
+
       - name: Build & Push
         id: build
         uses: docker/build-push-action@v6
