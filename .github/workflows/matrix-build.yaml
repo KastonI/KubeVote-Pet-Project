@@ -48,6 +48,7 @@ jobs:
           fi
 
           if [[ ${#SERVICES[@]} -eq 0 ]]; then
+            echo "No changes in src, so rebuilding the container is not required"
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo 'matrix={"service":[]}' >> "$GITHUB_OUTPUT"
             exit 0
