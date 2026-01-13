@@ -20,8 +20,10 @@ FROM mcr.microsoft.com/dotnet/runtime:7.0
 
 WORKDIR /app
 
+RUN groupadd -g 10001 app && useradd -u 10001 -g 10001 -m app
+
 COPY --from=build /app .
 
-USER app
+USER 10001:10001
 
 ENTRYPOINT ["dotnet", "Worker.dll"]

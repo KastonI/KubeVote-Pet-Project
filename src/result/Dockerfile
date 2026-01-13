@@ -4,6 +4,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl=7.88.1-10+
 
 WORKDIR /usr/local/app
 
+RUN groupadd -g 10001 app && useradd -u 10001 -g 10001 -m app
+
 RUN npm install -g nodemon
 
 COPY package*.json ./
@@ -15,7 +17,7 @@ COPY . .
 ENV PORT=8080
 EXPOSE 8080
 
-USER app
+USER 10001:10001
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]
