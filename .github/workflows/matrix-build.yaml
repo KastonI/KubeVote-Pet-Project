@@ -8,8 +8,6 @@ on:
       - "src/result/**"
       - "src/worker/**"
       - ".github/workflows/matrix-build.yaml"
-  pull_request:
-    branches: ["master"]
   workflow_dispatch:
 
 env:
@@ -86,7 +84,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Login GHCR
-        # if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -149,9 +147,10 @@ jobs:
     name: Update Helm values
     runs-on: ubuntu-latest
     needs: build_and_push
-    # if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     permissions:
       contents: write
+      pull-requests: write
 
     concurrency:
       group: gitops-values-update
@@ -204,3 +203,10 @@ jobs:
           git commit -m "chore(images): bump image digests" || exit 0
 
           git push origin ci/update-helm-values
+
+          gh pr create \
+            --title "chore(images): bump image digests" \
+            --body "Automated update from CI" \
+            --base master \
+            --head ci/update-helm-values \
+            || echo "PR already exists"
