@@ -19,7 +19,7 @@ namespace Worker
         {
             try
             {
-                // ===== ENV CONFIG ====
+                // ===== ENV CONFIG =====
                 string redisHost = Env("REDIS_HOST", "redis");
                 string redisPort = Env("REDIS_PORT", "6379");
 
