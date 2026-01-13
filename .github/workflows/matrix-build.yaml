@@ -201,5 +201,6 @@ jobs:
           git add "${PATH_TO_HELM}/values.yaml"
           git commit -m "chore(images): bump vote/result/worker image digests" || exit 0
 
-          git pull --rebase origin master
-          git push origin master && break
+          git checkout -b ci/update-helm-values
+          git commit -am "Update Helm values"
+          git push origin ci/update-helm-values
