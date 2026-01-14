@@ -112,6 +112,7 @@ postgresql:
     persistence:
       enabled: true
       size: 4Gi
+      storageClass: gp2
       persistentVolumeClaimRetentionPolicy:
         whenDeleted: Retain
         whenScaled: Retain
