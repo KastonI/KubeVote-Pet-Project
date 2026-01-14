@@ -32,13 +32,8 @@ module "eks" {
     }
     ebs-csi-driver = {
       before_compute = true
-      most_recent = true
-      pod_identity_association = [
-        {
-          role_arn        = module.ebs_csi_irsa_role.iam_role_arn
-          service_account = "ebs-csi-controller-sa"
-        }
-      ]
+      addon_version = "v1.54.0-eksbuild.1"
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
       # preserve                    = true
       tags = local.tags
     }
