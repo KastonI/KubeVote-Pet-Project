@@ -1,3 +1,16 @@
+module "ebs_csi_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.5.6"
+  role_name_prefix     = "${local.name}-ebs-csi-"
+  attach_ebs_csi_policy = true
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "21.8.0"
@@ -5,8 +18,6 @@ module "eks" {
   name               = local.name
   kubernetes_version = local.kubernetes_version
 
-  # Gives Terraform identity admin access to cluster which will
-  # allow deploying resources (Karpenter) into the cluster
   enable_cluster_creator_admin_permissions = true
   endpoint_public_access                   = true
 
@@ -18,6 +29,18 @@ module "eks" {
     kube-proxy = {}
     vpc-cni = {
       before_compute = true
+    }
+    ebs-csi-driver = {
+      before_compute = true
+      most_recent = true
+      pod_identity_association = [
+        {
+          role_arn        = module.ebs_csi_irsa_role.iam_role_arn
+          service_account = "ebs-csi-controller-sa"
+        }
+      ]
+      # preserve                    = true
+      tags = local.tags
     }
   }
 
