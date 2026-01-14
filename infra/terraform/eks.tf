@@ -1,7 +1,9 @@
+data "aws_region" "current" {}
+
 module "ebs_csi_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.5.6"
-  role_name_prefix     = "${local.name}-ebs-csi-"
+  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version               = "~> 5.5.6"
+  role_name_prefix      = "${local.name}-ebs-csi-"
   attach_ebs_csi_policy = true
   oidc_providers = {
     ex = {
@@ -30,13 +32,6 @@ module "eks" {
     vpc-cni = {
       before_compute = true
     }
-    ebs-csi-driver = {
-      before_compute = true
-      addon_version = "v1.54.0-eksbuild.1"
-      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
-      # preserve                    = true
-      tags = local.tags
-    }
   }
 
   vpc_id                   = module.vpc.vpc_id
@@ -44,7 +39,7 @@ module "eks" {
   control_plane_subnet_ids = module.vpc.intra_subnets
 
   eks_managed_node_groups = {
-    karpenter = {
+    "eks_node_group" = {
       ami_type       = "BOTTLEROCKET_x86_64"
       instance_types = ["t3.medium"]
 
@@ -65,4 +60,31 @@ module "eks" {
   })
 
   tags = local.tags
+}
+
+resource "helm_release" "ebs_csi" {
+  name       = "aws-ebs-csi-driver"
+  repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
+  chart      = "aws-ebs-csi-driver"
+  namespace  = "kube-system"
+  depends_on = [helm_release.karpenter]
+
+  set = [
+    {
+      name  = "controller.serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "controller.serviceAccount.name"
+      value = "ebs-csi-controller-sa"
+    },
+    {
+      name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.ebs_csi_irsa_role.iam_role_arn
+    },
+    {
+      name  = "controller.region"
+      value = local.region
+    }
+  ]
 }

@@ -26,6 +26,21 @@ provider "kubernetes" {
   }
 }
 
+provider "kubectl" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+  }
+  load_config_file = false
+}
+
+provider "argocd" {
+  core = true
+}
+
 #For test in local environment chose youre kubeconfig file
 # provider "helm" {
 #   kubernetes = {
@@ -56,11 +71,15 @@ terraform {
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
+      version = ">= 1.7"
     }
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 5"
+    }
+    argocd = {
+      source  = "argoproj-labs/argocd"
+      version = "~> 7.12"
     }
   }
 }

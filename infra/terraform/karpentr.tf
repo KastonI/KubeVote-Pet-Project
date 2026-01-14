@@ -13,7 +13,6 @@ module "karpenter" {
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-
   tags = local.tags
 }
 
@@ -36,6 +35,7 @@ resource "helm_release" "karpenter" {
 
   values = [
     <<-EOT
+    replicas: 1
     nodeSelector:
       karpenter.sh/controller: 'true'
     dnsPolicy: Default
@@ -47,4 +47,14 @@ resource "helm_release" "karpenter" {
       enabled: false
     EOT
   ]
+}
+
+resource "kubectl_manifest" "ec2_node_class" {
+  depends_on = [helm_release.karpenter]
+  yaml_body  = file("${path.module}/../../helm/ec2-node-class.yaml")
+}
+
+resource "kubectl_manifest" "node_pool_default" {
+  depends_on = [helm_release.karpenter]
+  yaml_body  = file("${path.module}/../../helm/node-pool-default.yaml")
 }

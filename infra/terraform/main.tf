@@ -25,4 +25,3 @@ locals {
   }
 }
 
-# EC2NodeClass and NodePool
