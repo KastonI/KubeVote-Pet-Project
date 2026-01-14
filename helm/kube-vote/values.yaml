@@ -60,7 +60,7 @@ result:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-result
-    digest: sha256:2185d51898ae791f9240743cfa8f646dc7dd2a5cf6dcf15de00c73228ddbfd51
+    digest: sha256:5e3b99724eec52f56edb6a2c143a1cdb4ff19b9afcc2c0752e3c46f91c1a57f8
     # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   service:
@@ -116,13 +116,11 @@ postgresql:
       persistentVolumeClaimRetentionPolicy:
         whenDeleted: Retain
         whenScaled: Retain
-
-  # primary:
-  #   persistence:
-  #     enabled: true
-  #     size: 4Gi
-  #     storageClass: local-storage
-
+        # primary:
+        #   persistence:
+        #     enabled: true
+        #     size: 4Gi
+        #     storageClass: local-storage
 redis:
   fullnameOverride: redis
   enabled: true
