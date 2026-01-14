@@ -111,8 +111,8 @@ postgresql:
   primary:
     persistence:
       enabled: true
-      size: 4Gi
-      storageClass: gp2
+      size: 5Gi
+      storageClass: gp3
       persistentVolumeClaimRetentionPolicy:
         whenDeleted: Retain
         whenScaled: Retain
