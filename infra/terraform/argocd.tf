@@ -10,7 +10,7 @@ resource "helm_release" "argocd" {
   cleanup_on_fail = true
   wait            = true
   timeout         = 600
-  #  depends_on = [ module.eks ]
+  depends_on      = [module.eks]
 
   set_sensitive = [{
     name  = "configs.secret.argocdServerAdminPassword"

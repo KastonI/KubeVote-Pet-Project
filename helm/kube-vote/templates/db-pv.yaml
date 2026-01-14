@@ -1,21 +1,21 @@
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgresql-db-data
-spec:
-  storageClassName: local-storage
-  capacity:
-    storage: 4Gi
-  accessModes:
-  - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  local:
-    path: /postgres
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - kubernetes
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: postgresql-db-data
+# spec:
+#   storageClassName: local-storage
+#   capacity:
+#     storage: 4Gi
+#   accessModes:
+#   - ReadWriteOnce
+#   persistentVolumeReclaimPolicy: Retain
+#   local:
+#     path: /postgres
+#   nodeAffinity:
+#     required:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: kubernetes.io/hostname
+#           operator: In
+#           values:
+#           - kubernetes
