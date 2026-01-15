@@ -2,7 +2,7 @@
 env: local   # local or eks
 
 storage:
-  capacity: 5Gb
+  capacity: 5Gi
   local:
     storageClassName: local-storage
     pv:
