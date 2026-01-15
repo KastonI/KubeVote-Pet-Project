@@ -1,5 +1,5 @@
 
-env: local # local or eks
+env: eks # local or eks
 
 global:
   imagePullPolicy: IfNotPresent
