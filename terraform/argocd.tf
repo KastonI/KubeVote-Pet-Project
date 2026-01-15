@@ -26,10 +26,10 @@ resource "helm_release" "argocd" {
     ignore_changes = [set_sensitive, set]
   }
 
-  values = [file("${path.root}/../cluster/argocd/argocd-values.yaml")]
+  values = [file("${path.root}/../argocd/argocd-values.yaml")]
 }
 
 resource "kubectl_manifest" "argocd_root_app" {
   depends_on = [helm_release.argocd]
-  yaml_body  = file("${path.root}/../cluster/argocd/root-of-app.yaml")
+  yaml_body  = file("${path.root}/../argocd/root-of-app.yaml")
 }
