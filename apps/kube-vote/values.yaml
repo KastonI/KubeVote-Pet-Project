@@ -69,10 +69,10 @@ vote:
   resources:
     requests:
       cpu: 100m
-      memory: 200Mi
+      memory: 256Mi
     limits:
       cpu: 150m
-      memory: 500Mi
+      memory: 512Mi
   redis_host: redis-master
   nodeSelector: {}
   tolerations: []
@@ -94,10 +94,10 @@ result:
   resources:
     requests:
       cpu: 100m
-      memory: 100Mi
+      memory: 128Mi
     limits:
-      cpu: 100m
-      memory: 100Mi
+      cpu: 200m
+      memory: 512Mi
   # Дополнительно (best practice hooks)
   nodeSelector: {}
   tolerations: []
@@ -115,7 +115,7 @@ worker:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 100m
+      cpu: 200m
       memory: 512Mi
   redis_host: redis-master
   # Дополнительно (best practice hooks)
