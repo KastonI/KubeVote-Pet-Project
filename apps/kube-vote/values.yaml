@@ -1,5 +1,5 @@
 
-env: eks   # local or eks
+env: local   # local or eks
 
 storage:
   capacity: 5Gb
