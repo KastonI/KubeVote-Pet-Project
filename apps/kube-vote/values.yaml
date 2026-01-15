@@ -1,5 +1,30 @@
 # Default values for KubeVote.
 
+env: local   # local or eks
+
+storage:
+  local:
+    storageClassName: local-storage
+    pv:
+      enabled: true
+      name: postgresql-db-data
+      size: 4Gi
+      path: /postgres
+      nodeHostname: kubernetes   # значение kubernetes.io/hostname
+      reclaimPolicy: Retain
+
+  eks:
+    storageClass:
+      enabled: true
+      name: gp3
+      provisioner: ebs.csi.aws.com
+      reclaimPolicy: Delete
+      volumeBindingMode: WaitForFirstConsumer
+      allowVolumeExpansion: true
+      parameters:
+        type: gp3
+        fsType: ext4
+
 global:
   imageRegistry: ""
   imageTag: ""
@@ -111,16 +136,8 @@ postgresql:
   primary:
     persistence:
       enabled: true
-      size: 5Gi
-      storageClass: gp3
-      persistentVolumeClaimRetentionPolicy:
-        whenDeleted: Delete
-        whenScaled: Delete
-        # primary:
-        #   persistence:
-        #     enabled: true
-        #     size: 4Gi
-        #     storageClass: local-storage
+      existingClaim: postgresql-claim
+
 redis:
   fullnameOverride: redis
   enabled: true

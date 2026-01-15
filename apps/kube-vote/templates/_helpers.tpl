@@ -73,3 +73,16 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name -}}
 {{- end -}}
 {{- end }}
+
+{{/*
+Choose environment
+*/}}
+{{- define "mychart.storageClassName" -}}
+{{- if eq .Values.env "local" -}}
+{{- .Values.storage.local.storageClassName -}}
+{{- else if eq .Values.env "eks" -}}
+{{- .Values.storage.eks.storageClass.name -}}
+{{- else -}}
+{{- fail (printf "Unknown .Values.env=%q. Use 'local' or 'eks'." .Values.env) -}}
+{{- end -}}
+{{- end -}}

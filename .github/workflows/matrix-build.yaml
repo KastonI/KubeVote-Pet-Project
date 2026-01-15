@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  PATH_TO_HELM: ./helm/kube-vote
+  PATH_TO_HELM: ./apps/kube-vote
 
 jobs:
   detect_changes:
