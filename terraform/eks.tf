@@ -1,18 +1,3 @@
-data "aws_region" "current" {}
-
-module "ebs_csi_irsa_role" {
-  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version               = "~> 5.5.6"
-  role_name_prefix      = "${local.name}-ebs-csi-"
-  attach_ebs_csi_policy = true
-  oidc_providers = {
-    ex = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
-  }
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "21.8.0"
@@ -64,12 +49,25 @@ module "eks" {
   tags = local.tags
 }
 
+module "ebs_csi_irsa_role" {
+  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version               = "~> 5.5.6"
+  role_name_prefix      = "${local.name}-ebs-csi-"
+  attach_ebs_csi_policy = true
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
 resource "helm_release" "ebs_csi" {
   name       = "aws-ebs-csi-driver"
   repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
   chart      = "aws-ebs-csi-driver"
   namespace  = "kube-system"
-  depends_on = [helm_release.karpenter]
+  depends_on = [kubectl_manifest.argocd_root_app]
 
   set = [
     {

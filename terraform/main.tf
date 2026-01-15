@@ -9,10 +9,6 @@ data "http" "ip" {
   url = "https://ifconfig.me/ip"
 }
 
-output "ip" {
-  value = data.http.ip.response_body
-}
-
 locals {
   name               = "ex-${basename(dirname(path.cwd))}"
   kubernetes_version = "1.34"

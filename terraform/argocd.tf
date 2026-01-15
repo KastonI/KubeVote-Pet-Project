@@ -6,7 +6,6 @@ resource "helm_release" "argocd" {
   repository      = "https://argoproj.github.io/argo-helm"
   chart           = "argo-cd"
   version         = "9.2.1"
-  atomic          = true
   cleanup_on_fail = true
   wait            = true
   timeout         = 600
@@ -30,6 +29,6 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubectl_manifest" "argocd_root_app" {
-  depends_on = [module.eks, helm_release.argocd]
+  depends_on = [helm_release.argocd]
   yaml_body  = file("${path.root}/../argocd/root-of-app.yaml")
 }

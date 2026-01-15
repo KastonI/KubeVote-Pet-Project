@@ -25,9 +25,7 @@ resource "helm_release" "karpenter" {
   repository          = "oci://public.ecr.aws/karpenter"
   chart               = "karpenter"
   version             = "1.8.4"
-  wait                = false
-  skip_crds = true
-
+  wait                = true
   depends_on = [module.eks]
 
   values = [
@@ -44,14 +42,4 @@ resource "helm_release" "karpenter" {
       enabled: false
     EOT
   ]
-}
-
-
-resource "helm_release" "karpenter-nodepool" {
-  namespace = "kube-system"
-  name      = "karpenter-nodepool"
-  chart     = "${path.root}/../apps/karpenter-nodepool"
-  wait      = false
-
-  depends_on = [module.karpenter]
 }

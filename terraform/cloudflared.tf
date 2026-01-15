@@ -64,8 +64,14 @@ data "cloudflare_zero_trust_tunnel_cloudflared_token" "example_zero_trust_tunnel
   tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.cloudflared_tunnel.id
 }
 
+resource "kubernetes_namespace_v1" "cloudflared_ns" {
+    metadata {
+    name = "cloudflared"
+  }
+}
+
 resource "kubernetes_secret_v1" "cloudflared" {
-  depends_on = [module.eks]
+  depends_on = [kubernetes_namespace_v1.cloudflared_ns]
   metadata {
     name = "tunnel-token"
     namespace = "cloudflared"
