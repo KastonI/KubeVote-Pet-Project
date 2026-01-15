@@ -22,6 +22,7 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
   endpoint_public_access                   = true
+  endpoint_public_access_cidrs = ["${trimspace(data.http.ip.response_body)}/32"]
 
   addons = {
     coredns = {}
@@ -53,6 +54,7 @@ module "eks" {
         "karpenter.sh/controller" = "true"
         "workload"                = "system"
       }
+      cidr_blocks = ["10.0.0.0/8"]
     }
   }
 
