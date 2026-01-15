@@ -7,7 +7,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: {{ .Values.storage.capacity }}
   {{- if eq .Values.env "local" }}
   storageClassName: {{ .Values.storage.local.storageClassName }}
   volumeName: {{ .Values.storage.local.pv.name }}   # <-- привязка к твоему PV

@@ -1,8 +1,8 @@
-# Default values for KubeVote.
 
 env: eks   # local or eks
 
 storage:
+  capacity: 5Gb
   local:
     storageClassName: local-storage
     pv:
@@ -10,9 +10,8 @@ storage:
       name: postgresql-db-data
       size: 4Gi
       path: /postgres
-      nodeHostname: kubernetes   # значение kubernetes.io/hostname
+      nodeHostname: kubernetes
       reclaimPolicy: Retain
-
   eks:
     storageClass:
       enabled: true
@@ -47,13 +46,13 @@ probes:
     periodSeconds: 5
     timeoutSeconds: 2
     failureThreshold: 3
-# This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 10
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 #--------------------------------------------------------------------
 vote:
   name: vote
@@ -110,7 +109,6 @@ worker:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-worker
-    #    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
     digest: sha256:fb7d875e60b3e1be4dd24025b0c40498a8da7c3cac5e63ac98942822ebd2e612
   podAnnotations: {}
   resources:

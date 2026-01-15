@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: karpenter-nodepool
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+
+  sources:
+  - repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
+    targetRevision: master
+    path: apps/karpenter-nodepool
+    helm:
+      valueFiles:
+        - values.yaml
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

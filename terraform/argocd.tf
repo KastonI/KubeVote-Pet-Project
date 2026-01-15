@@ -10,7 +10,7 @@ resource "helm_release" "argocd" {
   cleanup_on_fail = true
   wait            = true
   timeout         = 600
-  # depends_on      = [helm_release.karpenter]
+  depends_on      = [helm_release.karpenter]
 
   set_sensitive = var.argocd_admin_password_bcrypt != null ? [{
     name  = "configs.secret.argocdServerAdminPassword"
@@ -30,6 +30,6 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubectl_manifest" "argocd_root_app" {
-  depends_on = [helm_release.argocd]
+  depends_on = [module.eks, helm_release.argocd]
   yaml_body  = file("${path.root}/../argocd/root-of-app.yaml")
 }

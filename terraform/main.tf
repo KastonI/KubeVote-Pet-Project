@@ -5,17 +5,10 @@ data "aws_availability_zones" "available" {
   }
 }
 
-data "aws_ecrpublic_authorization_token" "token" {
-  region = "us-east-1"
-}
-
 locals {
-  name               = "ex-${basename(dirname(dirname(path.cwd)))}"
+  name               = "ex-${basename(dirname(path.cwd))}"
   kubernetes_version = "1.34"
   region             = "eu-central-1"
-
-  # is_local = var.env == "local"
-  # is_eks   = var.env == "eks"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 2)
