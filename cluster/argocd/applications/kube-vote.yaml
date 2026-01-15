@@ -17,12 +17,7 @@ spec:
     path: apps/kube-vote
     helm:
       valueFiles:
-        - $values/kube-vote.yaml
-
-  - repoURL: https://github.com/KastonI/KubeVote-Pet-Project.git
-    targetRevision: master
-    ref: values
-    path: cluster/values
+        - values.yaml
 
   syncPolicy:
     automated:
