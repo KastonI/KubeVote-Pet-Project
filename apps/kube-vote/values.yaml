@@ -1,6 +1,6 @@
 # Default values for KubeVote.
 
-env: local   # local or eks
+env: eks   # local or eks
 
 storage:
   local:
