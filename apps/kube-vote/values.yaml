@@ -8,7 +8,6 @@ storage:
     pv:
       enabled: true
       name: postgresql-db-data
-      size: 4Gi
       path: /postgres
       nodeHostname: kubernetes
       reclaimPolicy: Retain

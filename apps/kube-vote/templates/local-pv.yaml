@@ -10,7 +10,7 @@ metadata:
 spec:
   storageClassName: {{ .Values.storage.local.storageClassName }}
   capacity:
-    storage: {{ .Values.storage.local.pv.size }}
+    storage: {{ .Values.storage.capacity }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: {{ .Values.storage.local.pv.reclaimPolicy }}
