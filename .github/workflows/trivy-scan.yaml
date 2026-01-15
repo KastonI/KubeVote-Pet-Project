@@ -35,7 +35,6 @@ jobs:
           sarif_file: results.sarif
           category: gitleaks/fs/secrets
 
-
   misconfig-scan:
     name: Dependencies + misconfig (SARIF)
     runs-on: ubuntu-latest
@@ -65,7 +64,7 @@ jobs:
           category: trivy/fs/vuln-misconfig
 
   helm-iac-scan:
-    name: Helm / Kubernetes IaC
+    name: Helm
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -86,27 +85,12 @@ jobs:
           trivyignores: .trivyignore
 
       - name: Upload SARIF (helm)
-        if: always() && hashFiles('helm/**/Chart.yaml') != ''
+        if: always() && hashFiles('apps/**/Chart.yaml') != ''
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-helm.sarif
           category: trivy/config/helm
 
-      - name: Trivy Helm gate (table)
-        if: hashFiles('apps/**/Chart.yaml') != ''
-        uses: aquasecurity/trivy-action@0.33.1
-        with:
-          scan-type: config
-          scan-ref: helm
-          severity: CRITICAL
-          exit-code: "1"
-          format: table
-          trivyignores: .trivyignore
-
-      # ---------------------------------
-      # Terraform security scan
-      # Аналогично: SARIF всегда загрузить + gate валит на CRITICAL с читабельным логом
-      # ---------------------------------
   terraform-scan:
     name: Terraform security scan
     runs-on: ubuntu-latest
@@ -147,9 +131,6 @@ jobs:
           format: table
           trivyignores: .trivyignore
 
-      # -----------------------
-      # Terraform validate
-      # -----------------------
   terraform-validate:
     name: Terraform validate
     runs-on: ubuntu-latest

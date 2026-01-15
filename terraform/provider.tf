@@ -2,6 +2,10 @@ provider "aws" {
   region = local.region
 }
 
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
+}
+
 provider "helm" {
   kubernetes = {
     host                   = module.eks.cluster_endpoint
@@ -37,11 +41,9 @@ provider "kubectl" {
   load_config_file = false
 }
 
-# provider "argocd" {
-#   core = true
-# }
+#For test in local environment chose youre kubeconfig file and change in helm_values "env" to "local"
+#You also need to comment out the blocks related to EKS in terraform
 
-#For test in local environment chose youre kubeconfig file
 # provider "helm" {
 #   kubernetes = {
 #     config_path = "~/.kube/config"
@@ -56,11 +58,6 @@ provider "kubectl" {
 # provider "kubectl" {
 #   load_config_file = true
 # }
-
-
-provider "cloudflare" {
-  api_token = var.cloudflare_api_token
-}
 
 terraform {
   required_version = ">= 1.10.0"
@@ -85,10 +82,6 @@ terraform {
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 5"
-    }
-    argocd = {
-      source  = "argoproj-labs/argocd"
-      version = "~> 7.12"
     }
   }
 }

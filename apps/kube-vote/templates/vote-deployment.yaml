@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "kube-vote.labels" . | nindent 4 }}
 spec:
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.vote.replicaCount }}
   {{- end }}
@@ -26,19 +26,16 @@ spec:
             - name: http
               containerPort: {{ .Values.vote.service.targetPort }}
               protocol: TCP
+          {{- with .Values.global.securityContext }}
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.probes.liveness }}
+        {{- with .Values.global.probes.liveness }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.probes.readiness }}
+          {{- with .Values.global.probes.readiness }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}

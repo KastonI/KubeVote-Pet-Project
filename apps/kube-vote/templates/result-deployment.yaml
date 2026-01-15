@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "kube-vote.labels" . | nindent 4 }}
 spec:
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.result.replicaCount }}
   {{- end }}
@@ -21,27 +21,22 @@ spec:
         - name: "{{ .Values.result.name | default "result" }}"
           image: "{{ .Values.result.image.repository }}@{{ .Values.result.image.digest }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          {{- with .Values.global.securityContext }}
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.result.service.targetPort }}
               protocol: TCP
-          {{- with .Values.probes.liveness }}
+          {{- with .Values.global.probes.liveness }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.probes.readiness }}
+          {{- with .Values.global.probes.readiness }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
           {{- with .Values.result.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

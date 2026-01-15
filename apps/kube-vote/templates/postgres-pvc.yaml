@@ -10,9 +10,9 @@ spec:
       storage: {{ .Values.storage.capacity }}
   {{- if eq .Values.env "local" }}
   storageClassName: {{ .Values.storage.local.storageClassName }}
-  volumeName: {{ .Values.storage.local.pv.name }}   # <-- привязка к твоему PV
+  volumeName: {{ .Values.storage.local.pv.name }}
   {{- else if eq .Values.env "eks" }}
-  storageClassName: {{ .Values.storage.eks.storageClass.name }} # <-- динамика через SC
+  storageClassName: {{ .Values.storage.eks.storageClass.name }}
   {{- else }}
   {{- fail (printf "Unknown env=%q (use local|eks)" .Values.env) }}
   {{- end }}

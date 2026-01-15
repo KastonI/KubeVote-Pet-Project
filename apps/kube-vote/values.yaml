@@ -1,5 +1,35 @@
 
 env: local # local or eks
+
+global:
+  imagePullPolicy: IfNotPresent
+  revisionHistoryLimit: 2
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  probes:
+    liveness:
+      httpGet:
+        path: "/"
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 3
+    readiness:
+      httpGet:
+        path: "/"
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+#--------------------------------------------------------------------
 storage:
   capacity: 5Gi
   local:
@@ -21,41 +51,18 @@ storage:
       parameters:
         type: gp3
         fsType: ext4
-global:
-  imageRegistry: ""
-  imageTag: ""
-  imagePullPolicy: IfNotPresent
-revisionHistoryLimit: 2
-probes:
-  liveness:
-    httpGet:
-      path: "/"
-      port: 8080
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    timeoutSeconds: 2
-    failureThreshold: 3
-  readiness:
-    httpGet:
-      path: "/"
-      port: 8080
-    initialDelaySeconds: 5
-    periodSeconds: 5
-    timeoutSeconds: 2
-    failureThreshold: 3
-autoscaling:
-  enabled: true
-  minReplicas: 1
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
 #--------------------------------------------------------------------
 vote:
   name: vote
   replicaCount: 3
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
   image:
     repository: ghcr.io/kastoni/kubevote-vote
-    #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
     digest: "sha256:b10b56982698edf12d3b39180e43971660f494e57fb5ed234022705f38010a6d"
   podAnnotations: {}
   service:
@@ -81,7 +88,6 @@ result:
   image:
     repository: ghcr.io/kastoni/kubevote-result
     digest: sha256:12095813ab1a3a902bf0bf0a533a0891f2fdab38a6ad66c58f1f4c0e1cb29189
-    # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   service:
     type: NodePort
@@ -95,7 +101,6 @@ result:
     limits:
       cpu: 300m
       memory: 256Mi
-  # Дополнительно (best practice hooks)
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -115,7 +120,6 @@ worker:
       cpu: 200m
       memory: 256Mi
   redis_host: redis-master
-  # Дополнительно (best practice hooks)
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -131,6 +135,7 @@ postgresql:
     persistence:
       enabled: true
       existingClaim: postgresql-claim
+#--------------------------------------------------------------------
 redis:
   fullnameOverride: redis
   enabled: true

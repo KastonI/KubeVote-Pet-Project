@@ -22,7 +22,6 @@ ec2NodeClass:
     Project: ex-Project-X
     ManagedBy: Karpenter
 
-# NodePool
 nodePool:
   enabled: true
 

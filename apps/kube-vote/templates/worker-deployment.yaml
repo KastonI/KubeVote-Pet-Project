@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "kube-vote.labels" . | nindent 4 }}
 spec:
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.worker.replicaCount }}
   {{- end }}
@@ -21,18 +21,14 @@ spec:
         - name: "{{ .Values.worker.name | default "worker" }}"
           image: "{{ .Values.worker.image.repository }}@{{ .Values.worker.image.digest }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          {{- with .Values.global.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.worker.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
           env:
             - name: REDIS_HOST
               value: "{{ .Values.vote.redis_host }}"

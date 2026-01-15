@@ -1,4 +1,4 @@
-name: Build Images -> GHCR -> update Helm values
+name: Detect changes --> Build Images --> GHCR --> update Helm values
 on:
   push:
     branches: ["master"]
