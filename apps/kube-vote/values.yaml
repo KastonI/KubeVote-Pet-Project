@@ -1,6 +1,5 @@
 
-env: local   # local or eks
-
+env: local # local or eks
 storage:
   capacity: 5Gi
   local:
@@ -22,7 +21,6 @@ storage:
       parameters:
         type: gp3
         fsType: ext4
-
 global:
   imageRegistry: ""
   imageTag: ""
@@ -45,7 +43,6 @@ probes:
     periodSeconds: 5
     timeoutSeconds: 2
     failureThreshold: 3
-
 autoscaling:
   enabled: true
   minReplicas: 1
@@ -59,7 +56,7 @@ vote:
   image:
     repository: ghcr.io/kastoni/kubevote-vote
     #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
-    digest: "sha256:05e21d8a9ce2ada832c1a61d736ab82721716e4d1d7810bbd4845f8f702dfa9b"
+    digest: "sha256:b10b56982698edf12d3b39180e43971660f494e57fb5ed234022705f38010a6d"
   podAnnotations: {}
   service:
     type: NodePort
@@ -83,7 +80,7 @@ result:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-result
-    digest: sha256:5e3b99724eec52f56edb6a2c143a1cdb4ff19b9afcc2c0752e3c46f91c1a57f8
+    digest: sha256:12095813ab1a3a902bf0bf0a533a0891f2fdab38a6ad66c58f1f4c0e1cb29189
     # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
   podAnnotations: {}
   service:
@@ -108,7 +105,7 @@ worker:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-worker
-    digest: sha256:fb7d875e60b3e1be4dd24025b0c40498a8da7c3cac5e63ac98942822ebd2e612
+    digest: sha256:bad95495c760603d4e3b91cc84f05bd115a86fd14be83b0b11556386b2a70081
   podAnnotations: {}
   resources:
     requests:
@@ -134,7 +131,6 @@ postgresql:
     persistence:
       enabled: true
       existingClaim: postgresql-claim
-
 redis:
   fullnameOverride: redis
   enabled: true
