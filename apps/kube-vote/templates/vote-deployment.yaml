@@ -30,7 +30,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- with .Values.global.probes.liveness }}
+          {{- with .Values.global.probes.liveness }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
