@@ -6,9 +6,7 @@ metadata:
     {{- include "kube-vote.labels" . | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.result.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "kube-vote.selectorLabels" (dict "component" .Values.result.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 6 }}
