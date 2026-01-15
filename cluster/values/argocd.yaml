@@ -1,0 +1,15 @@
+#    global:
+#      nodeSelector:
+#        workload: system
+    configs:
+      cm:
+        url: https://localhost:8080
+      params:
+        server.insecure: false
+
+    server:
+      service:
+        type: ClusterIP
+
+      ingress:
+        enabled: false

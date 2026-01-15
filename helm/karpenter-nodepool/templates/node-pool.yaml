@@ -1,0 +1,15 @@
+metadata:
+  name: {{ include "karpenter.nodePoolName" . }}
+  labels:
+{{- include "karpenter.labels" . | nindent 4 }}
+
+spec:
+  template:
+    metadata:
+      labels:
+{{- include "karpenter.nodeLabels" .Values.nodePool.labels | nindent 8 }}
+    spec:
+      nodeClassRef:
+{{- include "karpenter.nodeClassRef" .Values.nodePool.nodeClassRef | nindent 8 }}
+      requirements:
+{{- include "karpenter.requirements" .Values.nodePool.requirements | nindent 8 }}

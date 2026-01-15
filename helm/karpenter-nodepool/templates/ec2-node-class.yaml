@@ -1,0 +1,8 @@
+metadata:
+  name: {{ include "karpenter.nodeClassName" . }}
+  labels:
+{{- include "karpenter.labels" . | nindent 4 }}
+
+spec:
+  tags:
+{{- include "karpenter.awsTags" .Values.nodeClass.tags | nindent 4 }}

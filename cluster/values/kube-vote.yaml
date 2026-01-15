@@ -1,0 +1,132 @@
+# Default values for KubeVote.
+
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: IfNotPresent
+revisionHistoryLimit: 2
+probes:
+  liveness:
+    httpGet:
+      path: "/"
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+  readiness:
+    httpGet:
+      path: "/"
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 3
+# This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+#--------------------------------------------------------------------
+vote:
+  name: vote
+  replicaCount: 3
+  image:
+    repository: ghcr.io/kastoni/kubevote-vote
+    #    tag: "latest"               # если пусто — будет использоваться .Chart.AppVersion
+    digest: "sha256:05e21d8a9ce2ada832c1a61d736ab82721716e4d1d7810bbd4845f8f702dfa9b"
+  podAnnotations: {}
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 8080
+    nodePort: 30080
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      cpu: 150m
+      memory: 500Mi
+  redis_host: redis-master
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+#--------------------------------------------------------------------
+result:
+  name: result
+  replicaCount: 1
+  image:
+    repository: ghcr.io/kastoni/kubevote-result
+    digest: sha256:5e3b99724eec52f56edb6a2c143a1cdb4ff19b9afcc2c0752e3c46f91c1a57f8
+    # tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+  podAnnotations: {}
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 8080
+    nodePort: 30081
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 100Mi
+  # Дополнительно (best practice hooks)
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+#--------------------------------------------------------------------
+worker:
+  name: worker
+  replicaCount: 1
+  image:
+    repository: ghcr.io/kastoni/kubevote-worker
+    #    tag: "latest" # если пусто — будет использоваться .Chart.AppVersion
+    digest: sha256:fb7d875e60b3e1be4dd24025b0c40498a8da7c3cac5e63ac98942822ebd2e612
+  podAnnotations: {}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 100m
+      memory: 512Mi
+  redis_host: redis-master
+  # Дополнительно (best practice hooks)
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+#--------------------------------------------------------------------
+postgresql:
+  enabled: true
+  fullnameOverride: db
+  auth:
+    username: postgres
+    password: postgres
+    database: postgres
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+      storageClass: gp3
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
+        # primary:
+        #   persistence:
+        #     enabled: true
+        #     size: 4Gi
+        #     storageClass: local-storage
+redis:
+  fullnameOverride: redis
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false

@@ -1,0 +1,94 @@
+# -----------------------------------------------------
+# Helm naming overrides (optional)
+# -----------------------------------------------------
+nameOverride: ""
+fullnameOverride: ""
+
+# -----------------------------------------------------
+# EC2NodeClass
+# -----------------------------------------------------
+nodeClass:
+  # Если не задано — возьмётся fullname release
+  name: karpentr
+
+  # IAM role для нод
+  role: ex-Project-X
+
+  ami:
+    alias: bottlerocket@latest
+
+  discoveryTag: ex-Project-X
+
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: ex-Project-X
+
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: ex-Project-X
+
+  tags:
+    karpenter.sh/discovery: ex-Project-X
+    Project: ex-Project-X
+    ManagedBy: Karpenter
+
+# -----------------------------------------------------
+# NodePool
+# -----------------------------------------------------
+nodePool:
+  # Если не задано — возьмётся fullname release
+  name: karpentr
+
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s
+
+  limits:
+    cpu: "4"
+    memory: 8Gi
+
+  labels:
+    workload: app
+    nodepool: karpentr
+
+  nodeClassRef:
+    group: karpenter.k8s.aws
+    kind: EC2NodeClass
+    # Можно ссылаться на nodeClass.name
+    name: karpentr
+
+  requirements:
+    - key: kubernetes.io/os
+      operator: In
+      values:
+        - linux
+
+    - key: kubernetes.io/arch
+      operator: In
+      values:
+        - amd64
+        - arm64
+
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values:
+        - spot
+
+    - key: karpenter.k8s.aws/instance-category
+      operator: In
+      values:
+        - c
+        - m
+        - t
+
+    - key: karpenter.k8s.aws/instance-generation
+      operator: Gt
+      values:
+        - "4"
+
+    - key: karpenter.k8s.aws/instance-size
+      operator: In
+      values:
+        - small
+        - medium
+        - large
