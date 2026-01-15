@@ -68,11 +68,11 @@ vote:
     nodePort: 30080
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 200m
+      memory: 150Mi
     limits:
-      cpu: 150m
-      memory: 512Mi
+      cpu: 600m
+      memory: 300Mi
   redis_host: redis-master
   nodeSelector: {}
   tolerations: []
@@ -96,8 +96,8 @@ result:
       cpu: 100m
       memory: 128Mi
     limits:
-      cpu: 200m
-      memory: 512Mi
+      cpu: 300m
+      memory: 256Mi
   # Дополнительно (best practice hooks)
   nodeSelector: {}
   tolerations: []
@@ -112,11 +112,11 @@ worker:
   podAnnotations: {}
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 50m
+      memory: 128Mi
     limits:
       cpu: 200m
-      memory: 512Mi
+      memory: 256Mi
   redis_host: redis-master
   # Дополнительно (best practice hooks)
   nodeSelector: {}
