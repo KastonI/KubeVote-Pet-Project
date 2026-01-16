@@ -91,11 +91,35 @@ jobs:
           sarif_file: trivy-helm.sarif
           category: trivy/config/helm
 
+  helm_lint:
+    name: Helm lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Helm lint kube-vote
+        if: hashFiles('apps/kube-vote/Chart.yaml') != ''
+        run: |
+          helm lint ./apps/kube-vote \
+            --values ./apps/kube-vote/values.yaml \
+            --strict
+
+      - name: Helm lint karpenter-nodepool
+        if: hashFiles('apps/karpenter-nodepool/Chart.yaml') != ''
+        run: |
+          helm lint ./apps/karpenter-nodepool\
+            --values ./apps/karpenter-nodepool/values.yaml \
+            --strict
+
   terraform-scan:
     name: Terraform security scan
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -135,7 +159,6 @@ jobs:
     name: Terraform validate
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
