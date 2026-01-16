@@ -1,6 +1,5 @@
 
 env: eks # local or eks
-
 global:
   imagePullPolicy: IfNotPresent
   revisionHistoryLimit: 2
@@ -63,7 +62,7 @@ vote:
     targetMemoryUtilizationPercentage: 80
   image:
     repository: ghcr.io/kastoni/kubevote-vote
-    digest: "sha256:b10b56982698edf12d3b39180e43971660f494e57fb5ed234022705f38010a6d"
+    digest: "sha256:6b7fb7eb96630ca624f2e798fc13f6ca02e0182037c4eb72a946751112e7e3c8"
   podAnnotations: {}
   service:
     type: ClusterIP # ClusterIP | NodePort
@@ -87,7 +86,7 @@ result:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-result
-    digest: sha256:12095813ab1a3a902bf0bf0a533a0891f2fdab38a6ad66c58f1f4c0e1cb29189
+    digest: sha256:07f4edc006f5cacbbafb478c274d967c96fd7b2463c19fb844baa1004db400ff
   podAnnotations: {}
   service:
     type: ClusterIP # ClusterIP | NodePort
@@ -110,7 +109,7 @@ worker:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-worker
-    digest: sha256:bad95495c760603d4e3b91cc84f05bd115a86fd14be83b0b11556386b2a70081
+    digest: sha256:bb635143640b1130b5efb5174145ef3e47e368cd82faf8de7f5ac7f3fc6762b0
   podAnnotations: {}
   resources:
     requests:
