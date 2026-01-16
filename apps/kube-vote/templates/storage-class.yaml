@@ -1,0 +1,16 @@
+{{- if and (eq .Values.env "eks") .Values.storage.eks.storageClass.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storage.eks.storageClass.name }}
+  labels:
+    {{- include "kube-vote.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/part-of: postgresql
+provisioner: {{ .Values.storage.eks.storageClass.provisioner }}
+reclaimPolicy: {{ .Values.storage.eks.storageClass.reclaimPolicy }}
+volumeBindingMode: {{ .Values.storage.eks.storageClass.volumeBindingMode }}
+allowVolumeExpansion: {{ .Values.storage.eks.storageClass.allowVolumeExpansion }}
+parameters:
+  {{- toYaml .Values.storage.eks.storageClass.parameters | nindent 2 }}
+{{- end }}

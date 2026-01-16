@@ -1,4 +1,4 @@
-name: Build Images -> GHCR -> update Helm values
+name: Detect changes --> Build Images --> GHCR --> update Helm values
 on:
   push:
     branches: ["master"]
@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  PATH_TO_HELM: ./helm/kube-vote
+  PATH_TO_HELM: ./apps/kube-vote
 
 jobs:
   detect_changes:
@@ -111,18 +111,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
           tags: |
-            type=raw,value=latest
+            type=raw,value=latest,enable=false
+            type=sha,format=long
             type=semver,pattern={{major}},prefix=v
             type=semver,pattern={{major}}.{{minor}},prefix=v
             type=semver,pattern={{version}},prefix=v
-            type=sha,format=short
-            type=sha,format=long
- 
-          labels: |
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
-            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+
 
       - name: Build & Push
         id: build

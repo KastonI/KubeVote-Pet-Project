@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.postgresql.primary.persistence.existingClaim }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.capacity }}
+  {{- if eq .Values.env "local" }}
+  storageClassName: {{ .Values.storage.local.storageClassName }}
+  volumeName: {{ .Values.storage.local.pv.name }}
+  {{- else if eq .Values.env "eks" }}
+  storageClassName: {{ .Values.storage.eks.storageClass.name }}
+  {{- else }}
+  {{- fail (printf "Unknown env=%q (use local|eks)" .Values.env) }}
+  {{- end }}
