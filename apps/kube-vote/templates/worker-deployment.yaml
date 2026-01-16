@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "kube-vote.name" .) .Values.worker.name | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "kube-vote.labels" . | nindent 4 }}
+spec:
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
+  replicas: {{ .Values.worker.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kube-vote.selectorLabels" (dict "component" .Values.worker.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kube-vote.podLabels" (dict "component" .Values.worker.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 8 }}
+    spec:
+      containers:
+        - name: "{{ .Values.worker.name | default "worker" }}"
+          image: "{{ .Values.worker.image.repository }}@{{ .Values.worker.image.digest }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          {{- with .Values.global.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.worker.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: REDIS_HOST
+              value: "{{ .Values.vote.redis_host }}"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

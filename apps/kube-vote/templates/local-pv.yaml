@@ -1,0 +1,27 @@
+{{- if and (eq .Values.env "local") (.Values.storage.local.pv.enabled) -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.storage.local.pv.name }}
+  labels:
+    {{- include "kube-vote.labels" . | nindent 4 }}
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/part-of: postgresql
+spec:
+  storageClassName: {{ .Values.storage.local.storageClassName }}
+  capacity:
+    storage: {{ .Values.storage.capacity }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: {{ .Values.storage.local.pv.reclaimPolicy }}
+  local:
+    path: {{ .Values.storage.local.pv.path }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.storage.local.pv.nodeHostname }}
+{{- end }}

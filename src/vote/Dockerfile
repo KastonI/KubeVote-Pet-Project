@@ -1,6 +1,8 @@
+# Originally based on Example Voting App (Apache License 2.0)
+# Modified by Illia Savchenko, 2026
 FROM python:3.11-slim AS base
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -fr /var/lib/apt/lists/*
 
 RUN groupadd -g 10001 app && useradd -u 10001 -g 10001 -m app
 

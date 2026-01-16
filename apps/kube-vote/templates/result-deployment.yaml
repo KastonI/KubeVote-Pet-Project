@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "kube-vote.name" .) .Values.result.name | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "kube-vote.labels" . | nindent 4 }}
+spec:
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
+  replicas: {{ .Values.result.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kube-vote.selectorLabels" (dict "component" .Values.result.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kube-vote.podLabels" (dict "component" .Values.result.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 8 }}
+    spec:
+      containers:
+        - name: "{{ .Values.result.name | default "result" }}"
+          image: "{{ .Values.result.image.repository }}@{{ .Values.result.image.digest }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          {{- with .Values.global.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.result.service.targetPort }}
+              protocol: TCP
+          {{- with .Values.global.probes.liveness }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.global.probes.readiness }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.result.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

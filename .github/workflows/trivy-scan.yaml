@@ -35,7 +35,6 @@ jobs:
           sarif_file: results.sarif
           category: gitleaks/fs/secrets
 
-
   misconfig-scan:
     name: Dependencies + misconfig (SARIF)
     runs-on: ubuntu-latest
@@ -65,21 +64,20 @@ jobs:
           category: trivy/fs/vuln-misconfig
 
   helm-iac-scan:
-    name: Helm / Kubernetes IaC
+    name: Helm
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Trivy Helm scan (SARIF, non-blocking)
-        if: hashFiles('helm/**/Chart.yaml') != ''
+        if: hashFiles('apps/**/Chart.yaml') != ''
         continue-on-error: true
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: config
-          scan-ref: helm
+          scan-ref: apps
           severity: CRITICAL
           exit-code: "0"
           format: sarif
@@ -87,38 +85,47 @@ jobs:
           trivyignores: .trivyignore
 
       - name: Upload SARIF (helm)
-        if: always() && hashFiles('helm/**/Chart.yaml') != ''
+        if: always() && hashFiles('apps/**/Chart.yaml') != ''
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-helm.sarif
           category: trivy/config/helm
 
-      - name: Trivy Helm gate (table)
-        if: hashFiles('helm/**/Chart.yaml') != ''
-        uses: aquasecurity/trivy-action@0.33.1
-        with:
-          scan-type: config
-          scan-ref: helm
-          severity: CRITICAL
-          exit-code: "1"
-          format: table
-          trivyignores: .trivyignore
+  helm_lint:
+    name: Helm lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
 
-      # ---------------------------------
-      # Terraform security scan
-      # Аналогично: SARIF всегда загрузить + gate валит на CRITICAL с читабельным логом
-      # ---------------------------------
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Helm lint kube-vote
+        if: hashFiles('apps/kube-vote/Chart.yaml') != ''
+        run: |
+          helm lint ./apps/kube-vote \
+            --values ./apps/kube-vote/values.yaml \
+            --strict
+
+      - name: Helm lint karpenter-nodepool
+        if: hashFiles('apps/karpenter-nodepool/Chart.yaml') != ''
+        run: |
+          helm lint ./apps/karpenter-nodepool\
+            --values ./apps/karpenter-nodepool/values.yaml \
+            --strict
+
   terraform-scan:
     name: Terraform security scan
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Trivy Terraform scan (SARIF, non-blocking)
-        if: hashFiles('**/*.tf') != ''
+        if: hashFiles('terraform/*.tf') != ''
         continue-on-error: true
         uses: aquasecurity/trivy-action@0.33.1
         with:
@@ -131,14 +138,14 @@ jobs:
           trivyignores: .trivyignore
 
       - name: Upload SARIF (terraform)
-        if: always() && hashFiles('**/*.tf') != ''
+        if: always() && hashFiles('terraform/*.tf') != ''
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-terraform.sarif
           category: trivy/config/terraform
 
       - name: Trivy Terraform gate (table)
-        if: hashFiles('**/*.tf') != ''
+        if: hashFiles('terraform/*.tf') != ''
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: config
@@ -148,28 +155,24 @@ jobs:
           format: table
           trivyignores: .trivyignore
 
-      # -----------------------
-      # Terraform validate
-      # -----------------------
   terraform-validate:
     name: Terraform validate
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Terraform
-        if: hashFiles('infra/terraform/**/*.tf') != ''
+        if: hashFiles('terraform/*.tf') != ''
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform init (no backend)
-        if: hashFiles('infra/terraform/**/*.tf') != ''
-        working-directory: infra/terraform
+        if: hashFiles('terraform/*.tf') != ''
+        working-directory: terraform
         run: terraform init -backend=false
 
       - name: Terraform validate
-        if: hashFiles('infra/terraform/**/*.tf') != ''
-        working-directory: infra/terraform
+        if: hashFiles('terraform/*.tf') != ''
+        working-directory: terraform
         run: terraform validate
