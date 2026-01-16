@@ -62,7 +62,7 @@ vote:
     targetMemoryUtilizationPercentage: 80
   image:
     repository: ghcr.io/kastoni/kubevote-vote
-    digest: "sha256:6b7fb7eb96630ca624f2e798fc13f6ca02e0182037c4eb72a946751112e7e3c8"
+    digest: "sha256:de65c108efbe64d32fd9c75489acfabd0159366e9461601c1edb6b286d94f8e4"
   podAnnotations: {}
   service:
     type: ClusterIP # ClusterIP | NodePort
@@ -86,7 +86,7 @@ result:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-result
-    digest: sha256:07f4edc006f5cacbbafb478c274d967c96fd7b2463c19fb844baa1004db400ff
+    digest: sha256:caf47b2f9d93a25b022ddcd121745dea6440af8652d2b33514f1e90e5d52c738
   podAnnotations: {}
   service:
     type: ClusterIP # ClusterIP | NodePort
@@ -109,7 +109,7 @@ worker:
   replicaCount: 1
   image:
     repository: ghcr.io/kastoni/kubevote-worker
-    digest: sha256:bb635143640b1130b5efb5174145ef3e47e368cd82faf8de7f5ac7f3fc6762b0
+    digest: sha256:bd2b36f08c5ba21ba3617c6e9f1070efa9178540d89220d6e9c64c121154b367
   podAnnotations: {}
   resources:
     requests:
