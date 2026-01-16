@@ -111,7 +111,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
           tags: |
-            type=raw,value=latest
+            type=raw,value=latest,prefix=v
             type=semver,pattern={{major}},prefix=v
             type=semver,pattern={{major}}.{{minor}},prefix=v
             type=semver,pattern={{version}},prefix=v

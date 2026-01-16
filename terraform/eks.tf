@@ -17,6 +17,13 @@ module "eks" {
     kube-proxy = {}
     vpc-cni = {
       before_compute = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+          WARM_IP_TARGET           = "1"
+        }
+      })
     }
     metrics-server = {}
   }
@@ -67,7 +74,7 @@ resource "helm_release" "ebs_csi" {
   repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
   chart      = "aws-ebs-csi-driver"
   namespace  = "kube-system"
-  depends_on = [kubectl_manifest.argocd_root_app]
+  depends_on = [module.eks]
 
   set = [
     {

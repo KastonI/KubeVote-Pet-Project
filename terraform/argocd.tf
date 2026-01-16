@@ -9,7 +9,7 @@ resource "helm_release" "argocd" {
   cleanup_on_fail = true
   wait            = true
   timeout         = 600
-  depends_on      = [helm_release.karpenter]
+  depends_on      = [module.eks]
 
   set_sensitive = var.argocd_admin_password_bcrypt != null ? [{
     name  = "configs.secret.argocdServerAdminPassword"
