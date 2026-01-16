@@ -111,18 +111,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/kubevote-${{ matrix.service }}
           tags: |
-            type=raw,value=latest,prefix=v
-            type=semver,pattern={{major}},prefix=v
-            type=semver,pattern={{major}}.{{minor}},prefix=v
-            type=semver,pattern={{version}},prefix=v
-            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
             type=sha,format=long
- 
-          labels: |
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
-            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+            type=semver,pattern={{major}},prefix=v,enable={{is_tag}}
+            type=semver,pattern={{major}}.{{minor}},prefix=v,enable={{is_tag}}
+            type=semver,pattern={{version}},prefix=v,enable={{is_tag}}
 
       - name: Build & Push
         id: build
