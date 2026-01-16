@@ -15,7 +15,7 @@ module "vpc" {
   enable_dns_hostnames = true
 
   private_subnet_tags = {
-    "karpenter.sh/discovery"          = local.name
+    "karpenter.sh/discovery" = local.name
   }
 
   tags = local.tags

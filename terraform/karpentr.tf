@@ -20,12 +20,12 @@ module "karpenter_disabled" {
 }
 
 resource "helm_release" "karpenter" {
-  namespace           = "kube-system"
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  chart               = "karpenter"
-  version             = "1.8.4"
-  wait                = true
+  namespace  = "kube-system"
+  name       = "karpenter"
+  repository = "oci://public.ecr.aws/karpenter"
+  chart      = "karpenter"
+  version    = "1.8.4"
+  wait       = true
   depends_on = [module.eks]
 
   values = [
