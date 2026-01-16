@@ -13,4 +13,6 @@ spec:
     protocol: TCP
     port: {{ .Values.vote.service.port }}
     targetPort: {{ .Values.vote.service.targetPort }}
+{{- if eq .Values.vote.service.type "nodePort" }}
     nodePort: {{ .Values.vote.service.nodePort }}
+{{- end }}

@@ -66,10 +66,10 @@ vote:
     digest: "sha256:b10b56982698edf12d3b39180e43971660f494e57fb5ed234022705f38010a6d"
   podAnnotations: {}
   service:
-    type: NodePort
+    type: ClusterIP # ClusterIP | NodePort
     port: 80
     targetPort: 8080
-    nodePort: 30080
+    nodePort: 30080 # Used if the service type is Nodeport
   resources:
     requests:
       cpu: 200m
@@ -90,10 +90,10 @@ result:
     digest: sha256:12095813ab1a3a902bf0bf0a533a0891f2fdab38a6ad66c58f1f4c0e1cb29189
   podAnnotations: {}
   service:
-    type: NodePort
+    type: ClusterIP # ClusterIP | NodePort
     port: 80
     targetPort: 8080
-    nodePort: 30081
+    nodePort: 30081 # Used if the service type is Nodeport
   resources:
     requests:
       cpu: 100m

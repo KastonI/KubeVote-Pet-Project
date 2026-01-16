@@ -10,9 +10,9 @@ data "http" "ip" {
 }
 
 locals {
-  name               = "ex-${basename(dirname(path.cwd))}"
+  name               = "ex-KubeVote"
   kubernetes_version = "1.34"
-  region             = "eu-central-1"
+  region             = var.aws_region
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 2)

@@ -1,3 +1,5 @@
+# Originally based on Example Voting App (Apache License 2.0)
+# Modified by Illia Savchenko, 2026
 FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 ARG TARGETPLATFORM

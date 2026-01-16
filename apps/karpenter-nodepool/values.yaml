@@ -4,22 +4,22 @@ fullnameOverride: ""
 ec2NodeClass:
   enabled: true
   name: ""
-  role: ex-Project-X
+  role: ex-KubeVote
 
   amiSelectorTerms:
     - alias: bottlerocket@latest
 
   subnetSelectorTerms:
     - tags:
-        karpenter.sh/discovery: ex-Project-X
+        karpenter.sh/discovery: ex-KubeVote
 
   securityGroupSelectorTerms:
     - tags:
-        karpenter.sh/discovery: ex-Project-X
+        karpenter.sh/discovery: ex-KubeVote
 
   tags:
-    karpenter.sh/discovery: ex-Project-X
-    Project: ex-Project-X
+    karpenter.sh/discovery: ex-KubeVote
+    Project: ex-KubeVote
     ManagedBy: Karpenter
 
 nodePool:
