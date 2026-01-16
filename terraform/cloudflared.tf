@@ -15,10 +15,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "config" {
   config = {
     ingress = [{
       hostname = "voting.${var.domain}"
-      service  = "http://kube-vote-vote:80"
+      service  = "https://kube-vote-vote.kube-vote.svc.cluster.local"
       }, {
       hostname = "result.${var.domain}"
-      service  = "http://kube-vote-result:80"
+      service  = "https://kube-vote-result.kube-vote.svc.cluster.local"
       }, {
       hostname = "argocd.${var.domain}"
       service  = "https://argocd-server.argocd.svc.cluster.local"

@@ -59,7 +59,7 @@ nodePool:
 
       - key: karpenter.k8s.aws/instance-category
         operator: In
-        values: ["c", "m", "t"]
+        values: ["m", "t"]
 
       - key: karpenter.k8s.aws/instance-generation
         operator: Gt
@@ -67,4 +67,4 @@ nodePool:
 
       - key: karpenter.k8s.aws/instance-size
         operator: In
-        values: ["small", "medium", "large"]
+        values: ["small", "medium"]
