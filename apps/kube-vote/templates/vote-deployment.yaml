@@ -16,7 +16,6 @@ spec:
     metadata:
       labels:
         {{- include "kube-vote.podLabels" (dict "component" .Values.vote.name "Release" .Release "Chart" .Chart "Values" .Values) | nindent 8 }}
-
     spec:
       containers:
         - name: "{{ .Values.vote.name | default "vote" }}"

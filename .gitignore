@@ -4,7 +4,7 @@ bin/
 obj/
 .vs/
 node_modules/
-.DS_store
+**/.DS_store
 
 **/.terraform/
 *.tfstate
@@ -31,7 +31,6 @@ terraform.rc
 *.crt
 *.key
 *.pem
-kubeconfig
 
 **/.ansible
 .stfolder/*
